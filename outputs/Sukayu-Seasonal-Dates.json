@@ -1,0 +1,1198 @@
+{
+  "1979": {
+    "snowfalls": {
+      "first": "1979-11-12",
+      "last": "1980-05-22",
+      "first_of_consequence": "1979-11-12",
+      "last_of_consequence": "1980-05-09"
+    },
+    "snowdepths": {
+      "100": "1980-01-01",
+      "200": "1980-01-11",
+      "300": "1980-02-13",
+      "400": null,
+      "500": null,
+      "all_gone": "1980-05-23"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1979-11-11",
+      "winter_all": "1979-12-08",
+      "spring_all": "1980-04-08",
+      "summer_all": null,
+      "autumn_avg": "1979-11-11",
+      "winter_avg": "1979-11-11",
+      "spring_avg": "1980-03-30",
+      "summer_avg": "1980-05-13"
+    }
+  },
+  "1980": {
+    "snowfalls": {
+      "first": "1980-12-13",
+      "last": "1981-03-29",
+      "first_of_consequence": "1980-12-13",
+      "last_of_consequence": "1981-03-27"
+    },
+    "snowdepths": {
+      "100": "1980-12-19",
+      "200": "1981-01-21",
+      "300": "1981-02-25",
+      "400": null,
+      "500": null,
+      "all_gone": "1981-05-19"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1980-12-13",
+      "winter_all": "1980-12-13",
+      "spring_all": null,
+      "summer_all": null,
+      "autumn_avg": "1980-12-13",
+      "winter_avg": "1980-12-13",
+      "spring_avg": null,
+      "summer_avg": null
+    }
+  },
+  "1981": {
+    "snowfalls": {
+      "first": "1981-11-07",
+      "last": "1982-03-28",
+      "first_of_consequence": "1981-11-07",
+      "last_of_consequence": "1982-03-26"
+    },
+    "snowdepths": {
+      "100": "1981-11-28",
+      "200": "1981-12-14",
+      "300": "1982-02-01",
+      "400": null,
+      "500": null,
+      "all_gone": "1982-04-01"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1981-11-07",
+      "winter_all": "1981-11-22",
+      "spring_all": null,
+      "summer_all": null,
+      "autumn_avg": "1981-11-07",
+      "winter_avg": "1981-11-07",
+      "spring_avg": null,
+      "summer_avg": null
+    }
+  },
+  "1982": {
+    "snowfalls": {
+      "first": "1982-11-18",
+      "last": "1983-05-17",
+      "first_of_consequence": "1982-11-20",
+      "last_of_consequence": "1983-04-29"
+    },
+    "snowdepths": {
+      "100": "1982-12-31",
+      "200": "1983-02-07",
+      "300": "1983-02-23",
+      "400": null,
+      "500": null,
+      "all_gone": "1983-05-19"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1982-11-10",
+      "winter_all": "1982-12-12",
+      "spring_all": "1983-03-30",
+      "summer_all": null,
+      "autumn_avg": "1982-11-10",
+      "winter_avg": "1982-11-19",
+      "spring_avg": "1983-03-28",
+      "summer_avg": "1983-04-22"
+    }
+  },
+  "1983": {
+    "snowfalls": {
+      "first": "1983-10-23",
+      "last": "1984-06-01",
+      "first_of_consequence": "1983-10-23",
+      "last_of_consequence": "1984-06-01"
+    },
+    "snowdepths": {
+      "100": "1983-11-27",
+      "200": "1983-12-23",
+      "300": "1984-02-04",
+      "400": "1984-02-16",
+      "500": null,
+      "all_gone": "1984-06-03"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1983-10-19",
+      "winter_all": "1983-12-01",
+      "spring_all": "1984-04-21",
+      "summer_all": null,
+      "autumn_avg": "1983-10-19",
+      "winter_avg": "1983-11-15",
+      "spring_avg": "1984-04-13",
+      "summer_avg": "1984-05-19"
+    }
+  },
+  "1984": {
+    "snowfalls": {
+      "first": "1984-11-01",
+      "last": "1985-05-18",
+      "first_of_consequence": "1984-11-01",
+      "last_of_consequence": "1985-05-18"
+    },
+    "snowdepths": {
+      "100": "1984-12-21",
+      "200": "1984-12-29",
+      "300": "1985-01-30",
+      "400": "1985-02-23",
+      "500": null,
+      "all_gone": "1985-05-19"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1984-10-31",
+      "winter_all": "1984-12-13",
+      "spring_all": "1985-04-13",
+      "summer_all": null,
+      "autumn_avg": "1984-10-31",
+      "winter_avg": "1984-11-08",
+      "spring_avg": "1985-03-29",
+      "summer_avg": null
+    }
+  },
+  "1985": {
+    "snowfalls": {
+      "first": "1985-10-10",
+      "last": "1986-05-28",
+      "first_of_consequence": "1985-11-15",
+      "last_of_consequence": "1986-05-28"
+    },
+    "snowdepths": {
+      "100": "1985-12-14",
+      "200": "1985-12-27",
+      "300": "1986-01-25",
+      "400": null,
+      "500": null,
+      "all_gone": "1986-05-29"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1985-10-17",
+      "winter_all": "1985-12-05",
+      "spring_all": "1986-04-13",
+      "summer_all": null,
+      "autumn_avg": "1985-10-09",
+      "winter_avg": "1985-11-11",
+      "spring_avg": "1986-04-03",
+      "summer_avg": null
+    }
+  },
+  "1986": {
+    "snowfalls": {
+      "first": "1986-10-07",
+      "last": "1987-05-19",
+      "first_of_consequence": "1986-10-10",
+      "last_of_consequence": "1987-05-19"
+    },
+    "snowdepths": {
+      "100": "1986-12-21",
+      "200": "1987-01-13",
+      "300": "1987-02-03",
+      "400": null,
+      "500": null,
+      "all_gone": "1987-05-20"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1986-10-07",
+      "winter_all": "1986-11-15",
+      "spring_all": "1987-04-15",
+      "summer_all": null,
+      "autumn_avg": "1986-10-07",
+      "winter_avg": "1986-11-10",
+      "spring_avg": "1987-03-20",
+      "summer_avg": "1987-05-07"
+    }
+  },
+  "1987": {
+    "snowfalls": {
+      "first": "1987-11-06",
+      "last": "1988-05-27",
+      "first_of_consequence": "1987-11-06",
+      "last_of_consequence": "1988-05-27"
+    },
+    "snowdepths": {
+      "100": "1987-12-04",
+      "200": "1988-01-19",
+      "300": "1988-02-11",
+      "400": "1988-02-19",
+      "500": null,
+      "all_gone": "1988-05-29"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1987-11-04",
+      "winter_all": "1987-11-24",
+      "spring_all": "1988-04-25",
+      "summer_all": null,
+      "autumn_avg": "1987-10-29",
+      "winter_avg": "1987-11-16",
+      "spring_avg": "1988-04-06",
+      "summer_avg": "1988-05-14"
+    }
+  },
+  "1988": {
+    "snowfalls": {
+      "first": "1988-11-03",
+      "last": "1989-05-13",
+      "first_of_consequence": "1988-11-03",
+      "last_of_consequence": "1989-05-08"
+    },
+    "snowdepths": {
+      "100": "1988-12-17",
+      "200": "1989-01-04",
+      "300": null,
+      "400": null,
+      "500": null,
+      "all_gone": "1989-05-14"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1988-11-02",
+      "winter_all": "1988-11-14",
+      "spring_all": "1989-04-07",
+      "summer_all": null,
+      "autumn_avg": "1988-11-02",
+      "winter_avg": "1988-11-02",
+      "spring_avg": "1989-03-25",
+      "summer_avg": null
+    }
+  },
+  "1989": {
+    "snowfalls": {
+      "first": "1989-11-14",
+      "last": "1990-05-11",
+      "first_of_consequence": "1989-11-23",
+      "last_of_consequence": "1990-05-11"
+    },
+    "snowdepths": {
+      "100": "1989-12-12",
+      "200": "1990-01-06",
+      "300": "1990-01-30",
+      "400": null,
+      "500": null,
+      "all_gone": "1990-05-14"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1989-11-01",
+      "winter_all": "1989-12-05",
+      "spring_all": "1990-03-28",
+      "summer_all": null,
+      "autumn_avg": "1989-10-23",
+      "winter_avg": "1989-11-14",
+      "spring_avg": "1990-02-19",
+      "summer_avg": "1990-05-05"
+    }
+  },
+  "1990": {
+    "snowfalls": {
+      "first": "1990-11-10",
+      "last": "1991-05-13",
+      "first_of_consequence": "1990-11-21",
+      "last_of_consequence": "1991-05-13"
+    },
+    "snowdepths": {
+      "100": "1991-01-06",
+      "200": "1991-01-30",
+      "300": "1991-02-24",
+      "400": null,
+      "500": null,
+      "all_gone": "1991-05-15"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1990-11-10",
+      "winter_all": "1990-12-23",
+      "spring_all": "1991-04-04",
+      "summer_all": null,
+      "autumn_avg": "1990-11-10",
+      "winter_avg": "1990-12-09",
+      "spring_avg": "1991-04-01",
+      "summer_avg": "1991-05-06"
+    }
+  },
+  "1991": {
+    "snowfalls": {
+      "first": "1991-11-05",
+      "last": "1992-05-25",
+      "first_of_consequence": "1991-11-10",
+      "last_of_consequence": "1992-05-19"
+    },
+    "snowdepths": {
+      "100": "1991-12-12",
+      "200": "1992-01-19",
+      "300": "1992-02-11",
+      "400": null,
+      "500": null,
+      "all_gone": "1992-05-26"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1991-11-05",
+      "winter_all": "1991-11-09",
+      "spring_all": "1992-03-28",
+      "summer_all": null,
+      "autumn_avg": "1991-11-05",
+      "winter_avg": "1991-11-08",
+      "spring_avg": "1992-03-24",
+      "summer_avg": null
+    }
+  },
+  "1992": {
+    "snowfalls": {
+      "first": "1992-11-25",
+      "last": "1993-05-26",
+      "first_of_consequence": "1992-11-25",
+      "last_of_consequence": "1993-05-26"
+    },
+    "snowdepths": {
+      "100": "1992-12-25",
+      "200": "1993-02-08",
+      "300": "1993-02-19",
+      "400": null,
+      "500": null,
+      "all_gone": "1993-05-27"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1992-11-20",
+      "winter_all": "1992-12-11",
+      "spring_all": "1993-04-21",
+      "summer_all": null,
+      "autumn_avg": "1992-11-20",
+      "winter_avg": "1992-11-20",
+      "spring_avg": "1993-03-30",
+      "summer_avg": null
+    }
+  },
+  "1993": {
+    "snowfalls": {
+      "first": "1993-11-23",
+      "last": "1994-05-19",
+      "first_of_consequence": "1993-11-23",
+      "last_of_consequence": "1994-05-19"
+    },
+    "snowdepths": {
+      "100": "1993-12-15",
+      "200": "1994-01-05",
+      "300": "1994-02-03",
+      "400": null,
+      "500": null,
+      "all_gone": "1994-05-20"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1993-11-22",
+      "winter_all": "1993-12-03",
+      "spring_all": "1994-04-11",
+      "summer_all": null,
+      "autumn_avg": "1993-11-22",
+      "winter_avg": "1993-11-22",
+      "spring_avg": "1994-03-30",
+      "summer_avg": "1994-05-09"
+    }
+  },
+  "1994": {
+    "snowfalls": {
+      "first": "1994-11-13",
+      "last": "1995-05-16",
+      "first_of_consequence": "1994-11-13",
+      "last_of_consequence": "1995-05-16"
+    },
+    "snowdepths": {
+      "100": "1994-12-15",
+      "200": "1995-01-13",
+      "300": "1995-01-16",
+      "400": null,
+      "500": null,
+      "all_gone": "1995-05-17"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1994-11-13",
+      "winter_all": "1994-12-10",
+      "spring_all": "1995-04-21",
+      "summer_all": null,
+      "autumn_avg": "1994-11-13",
+      "winter_avg": "1994-11-13",
+      "spring_avg": "1995-04-01",
+      "summer_avg": "1995-05-08"
+    }
+  },
+  "1995": {
+    "snowfalls": {
+      "first": "1995-11-02",
+      "last": "1996-06-08",
+      "first_of_consequence": "1995-11-02",
+      "last_of_consequence": "1996-06-08"
+    },
+    "snowdepths": {
+      "100": "1995-12-07",
+      "200": "1995-12-17",
+      "300": "1996-01-10",
+      "400": "1996-02-10",
+      "500": null,
+      "all_gone": "1996-06-09"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1995-11-01",
+      "winter_all": "1995-11-24",
+      "spring_all": "1996-04-22",
+      "summer_all": null,
+      "autumn_avg": "1995-11-01",
+      "winter_avg": "1995-11-20",
+      "spring_avg": "1996-04-14",
+      "summer_avg": "1996-05-23"
+    }
+  },
+  "1996": {
+    "snowfalls": {
+      "first": "1996-10-27",
+      "last": "1997-05-10",
+      "first_of_consequence": "1996-11-06",
+      "last_of_consequence": "1997-05-10"
+    },
+    "snowdepths": {
+      "100": "1996-12-20",
+      "200": "1997-01-21",
+      "300": "1997-02-13",
+      "400": null,
+      "500": null,
+      "all_gone": "1997-05-12"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1996-10-31",
+      "winter_all": "1996-11-12",
+      "spring_all": "1997-04-03",
+      "summer_all": null,
+      "autumn_avg": "1996-10-26",
+      "winter_avg": "1996-11-09",
+      "spring_avg": "1997-03-28",
+      "summer_avg": "1997-05-10"
+    }
+  },
+  "1997": {
+    "snowfalls": {
+      "first": "1997-10-08",
+      "last": "1998-04-23",
+      "first_of_consequence": "1997-10-25",
+      "last_of_consequence": "1998-04-23"
+    },
+    "snowdepths": {
+      "100": "1998-01-06",
+      "200": "1998-01-26",
+      "300": null,
+      "400": null,
+      "500": null,
+      "all_gone": "1998-04-25"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1997-10-11",
+      "winter_all": "1997-12-10",
+      "spring_all": "1998-04-04",
+      "summer_all": null,
+      "autumn_avg": "1997-10-08",
+      "winter_avg": "1997-11-27",
+      "spring_avg": "1998-03-23",
+      "summer_avg": "1998-04-16"
+    }
+  },
+  "1998": {
+    "snowfalls": {
+      "first": "1998-11-05",
+      "last": "1999-05-08",
+      "first_of_consequence": "1998-11-09",
+      "last_of_consequence": "1999-04-08"
+    },
+    "snowdepths": {
+      "100": "1998-11-21",
+      "200": "1998-12-30",
+      "300": "1999-01-10",
+      "400": "1999-02-06",
+      "500": null,
+      "all_gone": "1999-05-25"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1998-11-05",
+      "winter_all": "1998-11-18",
+      "spring_all": "1999-04-16",
+      "summer_all": null,
+      "autumn_avg": "1998-11-05",
+      "winter_avg": "1998-11-14",
+      "spring_avg": "1999-03-13",
+      "summer_avg": "1999-05-17"
+    }
+  },
+  "1999": {
+    "snowfalls": {
+      "first": "1999-10-16",
+      "last": "2000-05-22",
+      "first_of_consequence": "1999-10-16",
+      "last_of_consequence": "2000-04-30"
+    },
+    "snowdepths": {
+      "100": "1999-12-09",
+      "200": "2000-01-11",
+      "300": "2000-01-24",
+      "400": "2000-02-16",
+      "500": null,
+      "all_gone": "2000-05-30"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "1999-10-15",
+      "winter_all": "1999-11-26",
+      "spring_all": "2000-04-18",
+      "summer_all": "2000-05-25",
+      "autumn_avg": "1999-10-15",
+      "winter_avg": "1999-11-23",
+      "spring_avg": "2000-04-01",
+      "summer_avg": "2000-05-19"
+    }
+  },
+  "2000": {
+    "snowfalls": {
+      "first": "2000-10-26",
+      "last": "2001-05-22",
+      "first_of_consequence": "2000-11-08",
+      "last_of_consequence": "2001-05-22"
+    },
+    "snowdepths": {
+      "100": "2000-12-06",
+      "200": "2000-12-26",
+      "300": "2001-01-17",
+      "400": "2001-02-12",
+      "500": null,
+      "all_gone": "2001-05-23"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2000-10-26",
+      "winter_all": "2000-11-27",
+      "spring_all": "2001-04-05",
+      "summer_all": null,
+      "autumn_avg": "2000-10-18",
+      "winter_avg": "2000-11-08",
+      "spring_avg": "2001-03-18",
+      "summer_avg": "2001-05-10"
+    }
+  },
+  "2001": {
+    "snowfalls": {
+      "first": "2001-11-13",
+      "last": "2002-05-03",
+      "first_of_consequence": "2001-11-13",
+      "last_of_consequence": "2002-05-03"
+    },
+    "snowdepths": {
+      "100": "2001-12-07",
+      "200": "2001-12-31",
+      "300": "2002-02-12",
+      "400": null,
+      "500": null,
+      "all_gone": "2002-05-04"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2001-11-02",
+      "winter_all": "2001-11-26",
+      "spring_all": "2002-03-29",
+      "summer_all": null,
+      "autumn_avg": "2001-11-02",
+      "winter_avg": "2001-11-09",
+      "spring_avg": "2002-03-25",
+      "summer_avg": null
+    }
+  },
+  "2002": {
+    "snowfalls": {
+      "first": "2002-10-27",
+      "last": "2003-05-13",
+      "first_of_consequence": "2002-10-27",
+      "last_of_consequence": "2003-03-31"
+    },
+    "snowdepths": {
+      "100": "2002-12-10",
+      "200": "2002-12-29",
+      "300": "2003-01-30",
+      "400": "2003-03-08",
+      "500": null,
+      "all_gone": "2003-05-21"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2002-10-25",
+      "winter_all": "2002-11-13",
+      "spring_all": "2003-04-11",
+      "summer_all": null,
+      "autumn_avg": "2002-10-25",
+      "winter_avg": "2002-10-27",
+      "spring_avg": "2003-03-22",
+      "summer_avg": "2003-05-01"
+    }
+  },
+  "2003": {
+    "snowfalls": {
+      "first": "2003-11-07",
+      "last": "2004-05-19",
+      "first_of_consequence": "2003-11-07",
+      "last_of_consequence": "2004-05-19"
+    },
+    "snowdepths": {
+      "100": "2003-12-26",
+      "200": "2004-01-06",
+      "300": "2004-01-23",
+      "400": null,
+      "500": null,
+      "all_gone": "2004-05-20"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2003-11-04",
+      "winter_all": "2003-12-07",
+      "spring_all": "2004-04-09",
+      "summer_all": null,
+      "autumn_avg": "2003-10-23",
+      "winter_avg": "2003-11-21",
+      "spring_avg": "2004-03-24",
+      "summer_avg": "2004-05-06"
+    }
+  },
+  "2004": {
+    "snowfalls": {
+      "first": "2004-10-26",
+      "last": "2005-06-04",
+      "first_of_consequence": "2004-10-26",
+      "last_of_consequence": "2005-06-04"
+    },
+    "snowdepths": {
+      "100": "2004-12-27",
+      "200": "2005-01-08",
+      "300": "2005-01-25",
+      "400": "2005-02-05",
+      "500": "2005-03-04",
+      "all_gone": "2005-06-05"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2004-10-22",
+      "winter_all": "2004-12-17",
+      "spring_all": "2005-04-24",
+      "summer_all": "2005-05-29",
+      "autumn_avg": "2004-10-22",
+      "winter_avg": "2004-11-24",
+      "spring_avg": "2005-03-28",
+      "summer_avg": "2005-05-25"
+    }
+  },
+  "2005": {
+    "snowfalls": {
+      "first": "2005-11-08",
+      "last": "2006-05-27",
+      "first_of_consequence": "2005-11-08",
+      "last_of_consequence": "2006-05-27"
+    },
+    "snowdepths": {
+      "100": "2005-11-19",
+      "200": "2005-12-18",
+      "300": "2006-01-07",
+      "400": "2006-02-04",
+      "500": null,
+      "all_gone": "2006-05-29"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2005-10-25",
+      "winter_all": "2005-11-13",
+      "spring_all": "2006-04-23",
+      "summer_all": null,
+      "autumn_avg": "2005-10-25",
+      "winter_avg": "2005-11-09",
+      "spring_avg": "2006-04-06",
+      "summer_avg": "2006-05-14"
+    }
+  },
+  "2006": {
+    "snowfalls": {
+      "first": "2006-11-07",
+      "last": "2007-05-23",
+      "first_of_consequence": "2006-11-12",
+      "last_of_consequence": "2007-05-23"
+    },
+    "snowdepths": {
+      "100": "2006-12-10",
+      "200": "2007-01-09",
+      "300": "2007-01-27",
+      "400": null,
+      "500": null,
+      "all_gone": "2007-05-24"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2006-10-20",
+      "winter_all": "2006-11-29",
+      "spring_all": "2007-04-19",
+      "summer_all": null,
+      "autumn_avg": "2006-10-20",
+      "winter_avg": "2006-11-12",
+      "spring_avg": "2007-04-06",
+      "summer_avg": null
+    }
+  },
+  "2007": {
+    "snowfalls": {
+      "first": "2007-11-15",
+      "last": "2008-05-14",
+      "first_of_consequence": "2007-11-15",
+      "last_of_consequence": "2008-05-14"
+    },
+    "snowdepths": {
+      "100": "2007-11-22",
+      "200": "2008-01-01",
+      "300": "2008-01-19",
+      "400": "2008-02-17",
+      "500": null,
+      "all_gone": "2008-05-15"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2007-10-17",
+      "winter_all": "2007-11-18",
+      "spring_all": "2008-03-19",
+      "summer_all": null,
+      "autumn_avg": "2007-10-17",
+      "winter_avg": "2007-11-13",
+      "spring_avg": "2008-03-08",
+      "summer_avg": "2008-04-28"
+    }
+  },
+  "2008": {
+    "snowfalls": {
+      "first": "2008-10-29",
+      "last": "2009-05-15",
+      "first_of_consequence": "2008-10-29",
+      "last_of_consequence": "2009-05-09"
+    },
+    "snowdepths": {
+      "100": "2008-12-21",
+      "200": "2009-01-15",
+      "300": "2009-02-16",
+      "400": null,
+      "500": null,
+      "all_gone": "2009-05-17"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2008-10-31",
+      "winter_all": "2008-11-18",
+      "spring_all": "2009-04-08",
+      "summer_all": "2009-06-08",
+      "autumn_avg": "2008-10-25",
+      "winter_avg": "2008-11-15",
+      "spring_avg": "2009-03-13",
+      "summer_avg": "2009-04-30"
+    }
+  },
+  "2009": {
+    "snowfalls": {
+      "first": "2009-11-02",
+      "last": "2010-05-17",
+      "first_of_consequence": "2009-11-15",
+      "last_of_consequence": "2010-05-17"
+    },
+    "snowdepths": {
+      "100": "2009-12-21",
+      "200": "2010-01-14",
+      "300": "2010-02-21",
+      "400": null,
+      "500": null,
+      "all_gone": "2010-05-18"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2009-10-07",
+      "winter_all": "2009-11-16",
+      "spring_all": "2010-04-25",
+      "summer_all": "2010-05-17",
+      "autumn_avg": "2009-10-03",
+      "winter_avg": "2009-11-14",
+      "spring_avg": "2010-03-31",
+      "summer_avg": "2010-05-15"
+    }
+  },
+  "2010": {
+    "snowfalls": {
+      "first": "2010-10-26",
+      "last": "2011-05-22",
+      "first_of_consequence": "2010-11-15",
+      "last_of_consequence": "2011-04-22"
+    },
+    "snowdepths": {
+      "100": "2010-12-23",
+      "200": "2011-01-06",
+      "300": "2011-01-10",
+      "400": "2011-03-12",
+      "500": null,
+      "all_gone": "2011-05-27"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2010-10-14",
+      "winter_all": "2010-12-12",
+      "spring_all": "2011-04-22",
+      "summer_all": "2011-06-02",
+      "autumn_avg": "2010-09-21",
+      "winter_avg": "2010-11-23",
+      "spring_avg": "2011-04-04",
+      "summer_avg": "2011-05-31"
+    }
+  },
+  "2011": {
+    "snowfalls": {
+      "first": "2011-11-15",
+      "last": "2012-04-30",
+      "first_of_consequence": "2011-11-15",
+      "last_of_consequence": "2012-04-09"
+    },
+    "snowdepths": {
+      "100": "2011-12-15",
+      "200": "2011-12-26",
+      "300": "2012-01-11",
+      "400": "2012-01-28",
+      "500": null,
+      "all_gone": "2012-05-28"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2011-10-24",
+      "winter_all": "2011-12-04",
+      "spring_all": "2012-04-09",
+      "summer_all": "2012-06-01",
+      "autumn_avg": "2011-09-19",
+      "winter_avg": "2011-11-15",
+      "spring_avg": "2012-04-07",
+      "summer_avg": "2012-04-25"
+    }
+  },
+  "2012": {
+    "snowfalls": {
+      "first": "2012-11-02",
+      "last": "2013-05-07",
+      "first_of_consequence": "2012-11-23",
+      "last_of_consequence": "2013-05-03"
+    },
+    "snowdepths": {
+      "100": "2012-12-06",
+      "200": "2012-12-20",
+      "300": "2013-01-04",
+      "400": "2013-01-18",
+      "500": "2013-02-21",
+      "all_gone": "2013-06-06"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2012-10-18",
+      "winter_all": "2012-11-18",
+      "spring_all": "2013-04-22",
+      "summer_all": "2013-05-26",
+      "autumn_avg": "2012-10-03",
+      "winter_avg": "2012-11-14",
+      "spring_avg": "2013-03-31",
+      "summer_avg": "2013-05-21"
+    }
+  },
+  "2013": {
+    "snowfalls": {
+      "first": "2013-10-16",
+      "last": "2014-04-15",
+      "first_of_consequence": "2013-11-11",
+      "last_of_consequence": "2014-04-06"
+    },
+    "snowdepths": {
+      "100": "2013-12-08",
+      "200": "2014-01-04",
+      "300": "2014-01-11",
+      "400": "2014-02-07",
+      "500": null,
+      "all_gone": "2014-05-28"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2013-10-16",
+      "winter_all": "2013-11-27",
+      "spring_all": "2014-04-20",
+      "summer_all": "2014-05-25",
+      "autumn_avg": "2013-10-10",
+      "winter_avg": "2013-11-07",
+      "spring_avg": "2014-03-22",
+      "summer_avg": "2014-05-21"
+    }
+  },
+  "2014": {
+    "snowfalls": {
+      "first": "2014-10-27",
+      "last": "2015-04-08",
+      "first_of_consequence": "2014-10-27",
+      "last_of_consequence": "2015-03-25"
+    },
+    "snowdepths": {
+      "100": "2014-12-06",
+      "200": "2014-12-25",
+      "300": "2015-01-02",
+      "400": null,
+      "500": null,
+      "all_gone": "2015-05-10"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2014-10-10",
+      "winter_all": "2014-11-13",
+      "spring_all": "2015-03-16",
+      "summer_all": "2015-04-27",
+      "autumn_avg": "2014-09-29",
+      "winter_avg": "2014-11-11",
+      "spring_avg": "2015-03-14",
+      "summer_avg": "2015-04-23"
+    }
+  },
+  "2015": {
+    "snowfalls": {
+      "first": "2015-10-25",
+      "last": "2016-05-06",
+      "first_of_consequence": "2015-11-24",
+      "last_of_consequence": "2016-03-26"
+    },
+    "snowdepths": {
+      "100": "2015-12-26",
+      "200": "2016-01-11",
+      "300": "2016-03-01",
+      "400": null,
+      "500": null,
+      "all_gone": "2016-05-14"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2015-10-03",
+      "winter_all": "2015-12-17",
+      "spring_all": "2016-04-16",
+      "summer_all": "2016-05-18",
+      "autumn_avg": "2015-09-27",
+      "winter_avg": "2015-11-19",
+      "spring_avg": "2016-03-13",
+      "summer_avg": "2016-05-10"
+    }
+  },
+  "2016": {
+    "snowfalls": {
+      "first": "2016-10-20",
+      "last": "2017-04-26",
+      "first_of_consequence": "2016-11-15",
+      "last_of_consequence": "2017-04-20"
+    },
+    "snowdepths": {
+      "100": "2016-12-10",
+      "200": "2017-01-11",
+      "300": "2017-02-02",
+      "400": null,
+      "500": null,
+      "all_gone": "2017-05-22"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2016-10-09",
+      "winter_all": "2016-12-06",
+      "spring_all": "2017-04-03",
+      "summer_all": "2017-05-19",
+      "autumn_avg": "2016-10-03",
+      "winter_avg": "2016-10-29",
+      "spring_avg": "2017-03-30",
+      "summer_avg": "2017-05-15"
+    }
+  },
+  "2017": {
+    "snowfalls": {
+      "first": "2017-10-23",
+      "last": "2018-05-19",
+      "first_of_consequence": "2017-11-11",
+      "last_of_consequence": "2018-04-16"
+    },
+    "snowdepths": {
+      "100": "2017-11-26",
+      "200": "2017-12-19",
+      "300": "2018-01-25",
+      "400": "2018-02-18",
+      "500": null,
+      "all_gone": "2018-05-21"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2017-10-10",
+      "winter_all": "2017-11-15",
+      "spring_all": "2018-04-17",
+      "summer_all": "2018-05-28",
+      "autumn_avg": "2017-09-28",
+      "winter_avg": "2017-11-13",
+      "spring_avg": "2018-03-21",
+      "summer_avg": "2018-05-10"
+    }
+  },
+  "2018": {
+    "snowfalls": {
+      "first": "2018-10-30",
+      "last": "2019-04-28",
+      "first_of_consequence": "2018-10-30",
+      "last_of_consequence": "2019-04-28"
+    },
+    "snowdepths": {
+      "100": "2018-12-08",
+      "200": "2018-12-28",
+      "300": "2019-01-18",
+      "400": "2019-02-12",
+      "500": null,
+      "all_gone": "2019-05-26"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2018-10-12",
+      "winter_all": "2018-12-05",
+      "spring_all": "2019-04-12",
+      "summer_all": "2019-05-16",
+      "autumn_avg": "2018-10-08",
+      "winter_avg": "2018-11-17",
+      "spring_avg": "2019-03-15",
+      "summer_avg": "2019-05-12"
+    }
+  },
+  "2019": {
+    "snowfalls": {
+      "first": "2019-11-07",
+      "last": "2020-05-20",
+      "first_of_consequence": "2019-11-07",
+      "last_of_consequence": "2020-04-28"
+    },
+    "snowdepths": {
+      "100": "2019-12-15",
+      "200": "2020-01-21",
+      "300": "2020-02-08",
+      "400": null,
+      "500": null,
+      "all_gone": "2020-05-25"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2019-10-27",
+      "winter_all": "2019-12-03",
+      "spring_all": "2020-04-28",
+      "summer_all": "2020-05-29",
+      "autumn_avg": "2019-10-09",
+      "winter_avg": "2019-11-13",
+      "spring_avg": "2020-03-04",
+      "summer_avg": "2020-05-22"
+    }
+  },
+  "2020": {
+    "snowfalls": {
+      "first": "2020-10-30",
+      "last": "2021-05-03",
+      "first_of_consequence": "2020-11-08",
+      "last_of_consequence": "2021-02-27"
+    },
+    "snowdepths": {
+      "100": "2020-12-14",
+      "200": "2020-12-19",
+      "300": "2021-01-08",
+      "400": "2021-02-24",
+      "500": null,
+      "all_gone": "2021-05-19"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2020-10-13",
+      "winter_all": "2020-11-26",
+      "spring_all": "2021-03-24",
+      "summer_all": "2021-05-15",
+      "autumn_avg": "2020-10-03",
+      "winter_avg": "2020-11-08",
+      "spring_avg": "2021-03-19",
+      "summer_avg": "2021-05-11"
+    }
+  },
+  "2021": {
+    "snowfalls": {
+      "first": "2021-10-17",
+      "last": "2022-05-16",
+      "first_of_consequence": "2021-10-21",
+      "last_of_consequence": "2022-05-03"
+    },
+    "snowdepths": {
+      "100": "2021-12-18",
+      "200": "2021-12-27",
+      "300": "2022-01-04",
+      "400": "2022-01-30",
+      "500": null,
+      "all_gone": "2022-05-20"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2021-10-20",
+      "winter_all": "2021-12-17",
+      "spring_all": "2022-04-16",
+      "summer_all": "2022-06-14",
+      "autumn_avg": "2021-10-11",
+      "winter_avg": "2021-11-20",
+      "spring_avg": "2022-03-22",
+      "summer_avg": "2022-05-04"
+    }
+  },
+  "2022": {
+    "snowfalls": {
+      "first": "2022-11-03",
+      "last": "2023-05-08",
+      "first_of_consequence": "2022-11-15",
+      "last_of_consequence": "2023-04-19"
+    },
+    "snowdepths": {
+      "100": "2022-12-04",
+      "200": "2023-01-02",
+      "300": "2023-01-25",
+      "400": "2023-02-21",
+      "500": null,
+      "all_gone": "2023-05-16"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2022-10-23",
+      "winter_all": "2022-11-30",
+      "spring_all": "2023-03-29",
+      "summer_all": "2023-06-04",
+      "autumn_avg": "2022-10-02",
+      "winter_avg": "2022-11-27",
+      "spring_avg": "2023-03-04",
+      "summer_avg": "2023-05-12"
+    }
+  },
+  "2023": {
+    "snowfalls": {
+      "first": "2023-10-21",
+      "last": "2024-04-09",
+      "first_of_consequence": "2023-11-11",
+      "last_of_consequence": "2024-04-02"
+    },
+    "snowdepths": {
+      "100": "2023-12-18",
+      "200": "2023-12-23",
+      "300": "2024-01-15",
+      "400": null,
+      "500": null,
+      "all_gone": "2024-05-12"
+    },
+    "scandi_season_starts": {
+      "autumn_all": "2023-10-20",
+      "winter_all": "2023-12-17",
+      "spring_all": "2024-04-03",
+      "summer_all": "2024-06-07",
+      "autumn_avg": "2023-10-02",
+      "winter_avg": "2023-11-23",
+      "spring_avg": "2024-02-13",
+      "summer_avg": "2024-04-30"
+    }
+  },
+  "2024": {
+    "snowfalls": {
+      "first": null,
+      "last": null,
+      "first_of_consequence": null,
+      "last_of_consequence": null
+    },
+    "snowdepths": {
+      "100": null,
+      "200": null,
+      "300": null,
+      "400": null,
+      "500": null,
+      "all_gone": null
+    },
+    "scandi_season_starts": {
+      "autumn_all": null,
+      "winter_all": null,
+      "spring_all": null,
+      "summer_all": null,
+      "autumn_avg": "2024-10-07",
+      "winter_avg": null,
+      "spring_avg": null,
+      "summer_avg": null
+    }
+  }
+}
