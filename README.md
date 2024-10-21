@@ -11,16 +11,18 @@ As one of the oldest offical weather stations in Japan, and also at the foot of 
 What we call "Scandi Seasons" here is inspired by a method used in Scandinavia to identify when the seasons starter from a meteorological point of view (instead of astrological).
 
 We calculate 2 versions, one based on the daily mean temperature for 7 days, so:
-The First Day of Autumn is the first day that the daily mean temperature remained below 10°C for 7 consecutive days.
-The First Day of Winter is the first day that the daily mean temperature remained below  0°C for 7 consecutive days.
-The First Day of Spring is the first day that the daily mean temperature remained above  0°C for 7 consecutive days.
-The First Day of Summer is the first day that the daily mean temperature remained above 10°C for 7 consecutive days.
+
+- The First Day of Autumn is the first day that the daily mean temperature remained below 10°C for 7 consecutive days.
+- The First Day of Winter is the first day that the daily mean temperature remained below  0°C for 7 consecutive days.
+- The First Day of Spring is the first day that the daily mean temperature remained above  0°C for 7 consecutive days.
+- The First Day of Summer is the first day that the daily mean temperature remained above 10°C for 7 consecutive days.
 
 … and the other based on the average daily mean temperature across 7 days, so:
-The First Day of Autumn is the first day that the avergae of following 7 days' daily mean temperature remained below 10°C.
-The First Day of Winter is the first day that the avergae of following 7 days' daily mean temperature remained below  0°C.
-The First Day of Spring is the first day that the avergae of following 7 days' daily mean temperature remained above  0°C.
-The First Day of Summer is the first day that the avergae of following 7 days' daily mean temperature remained above 10°C.
+
+- The First Day of Autumn is the first day that the avergae of following 7 days' daily mean temperature remained below 10°C.
+- The First Day of Winter is the first day that the avergae of following 7 days' daily mean temperature remained below  0°C.
+- The First Day of Spring is the first day that the avergae of following 7 days' daily mean temperature remained above  0°C.
+- The First Day of Summer is the first day that the avergae of following 7 days' daily mean temperature remained above 10°C.
 
 ## Snowfalls
 
