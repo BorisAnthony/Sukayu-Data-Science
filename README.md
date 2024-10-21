@@ -1,4 +1,4 @@
-![Sukayu Onsen]('./assets/Sukayu-Photo.jpeg')
+![Sukayu Onsen](./assets/Sukayu-Photo.jpeg)
 
 # Sukayu Seasonal Weather Observations Analysis
 
