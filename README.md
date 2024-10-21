@@ -4,3 +4,8 @@ This project analyses various databases of historical weather observation data f
 
 As one of the oldest offical weather stations in Japan, and also at the foot of the Hakkoda Mountains, known to be one of the snowiest places in the country, we hope to glean some trends in the effects of climate change on the area's winter mountain sport seasons.
 
+
+# How to install & run
+
+This project currently is based in the Python programming language and requires familarity with environment setup.
+I will try to lightly document easy setup instructions eventually.
