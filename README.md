@@ -7,7 +7,7 @@ This project analyses various databases of historical weather observation data f
 As one of the oldest offical weather stations in Japan, and also at the foot of the Hakkoda Mountains, known to be one of the snowiest places in the country, we hope to glean some trends in the effects of climate change on the area's winter mountain sport seasons.
 
 
-# What are the various dates in "Sukayu-Seasonal-Dates.json"
+# What are the various dates in "[Sukayu-Seasonal-Dates.json](./outputs/Sukayu-Seasonal-Dates.json)"
 
 ## "Scandi Seasons"
 What we call "Scandi Seasons" here is inspired by a method used in Scandinavia to identify when the seasons started from a meteorological point of view (instead of astrological).
