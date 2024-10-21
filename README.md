@@ -1,3 +1,5 @@
+![Sukayu Onsen]('./assets/Sukayu-Photo.jpeg')
+
 # Sukayu Seasonal Weather Observations Analysis
 
 This project analyses various databases of historical weather observation data from the JMA (Japan Meteorological Association) station at Sukayu Onsen, Aomori, Japan.
