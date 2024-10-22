@@ -47,17 +47,17 @@ def extract_year(df, date_column, year_column):
     df.loc[:, year_column] = df[date_column].dt.year
     return df
 
-def get_timespan_data(df, year, timezone, date_column, find_last=False, custom_start_month=1, custom_start_day=1):
+def get_timespan_data(df, year, date_column, find_last=False, custom_start_month=1, custom_start_day=1):
     """
     Extract timespan data for a given year and date range.
     """
     next_year = year + 1
-    later_first = pd.Timestamp(f'{next_year}-07-01', tz=timezone)
+    later_first = pd.Timestamp(f'{next_year}-07-01', tz=jst)
     
     if custom_start_month == 1 and custom_start_day == 1:
-        earlier_first = pd.Timestamp(f'{next_year}-01-01', tz=timezone)
+        earlier_first = pd.Timestamp(f'{next_year}-01-01', tz=jst)
     else:
-        earlier_first = pd.Timestamp(f'{year}-{custom_start_month:02d}-{custom_start_day:02d}', tz=timezone)
+        earlier_first = pd.Timestamp(f'{year}-{custom_start_month:02d}-{custom_start_day:02d}', tz=jst)
     
     timespan_data = df[(df[date_column] >= earlier_first) & (df[date_column] <= later_first)]
     return timespan_data.sort_values(by=date_column, ascending=not find_last)
@@ -85,7 +85,7 @@ def find_in(timespan_data, timespan, date_column, search_column, all_or_mean, th
 
 def main():
     db_path = '../database/sukayu_historical_obs_daily.sqlite'
-    query = "SELECT obs_date, snowfall, temp_avg, snowdepth FROM obs_sukayu_daily"
+    query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, snowfall, snowdepth FROM obs_sukayu_daily"
     
     # Connect to the SQLite database
     conn = connect_to_db(db_path)
@@ -102,7 +102,7 @@ def main():
     df = convert_to_datetime(df, 'obs_date', jst)
 
     # Clean the snowfall data
-    df = clean_column_data(df, 'snowfall')
+    # df = clean_column_data(df, 'snowfall')
 
     # Filter the data to include only dates from September 1st to December 31st
     oct_dec_df = filter_data_by_month(df, 'obs_date', 9, 12)
@@ -115,7 +115,10 @@ def main():
 
     # Group the data by year and find the first and last snowfall dates
     for year, group in oct_dec_df.groupby('year'):
-   
+
+        """ Set the timespan data for the season for use in full-season min/max/sum/avg calculations """
+        season_timespan = get_timespan_data(df, year, 'obs_date', custom_start_month=11, custom_start_day=1)
+
         """Find the first date where snowfall is not 0.0."""
         first_snowfall_date = find_in(
             timespan_data=group, 
@@ -129,7 +132,7 @@ def main():
 
         """Find the last snowfall date by scanning backwards from June of the following year."""
         last_snowfall_date  = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date', find_last=True), 
+            timespan_data=get_timespan_data(df, year, 'obs_date', find_last=True), 
             timespan=1, 
             date_column='obs_date', 
             search_column='snowfall', 
@@ -151,7 +154,7 @@ def main():
 
         """Find the last date where snowfall is not 0.0 and followed by at least 2 more days with non-zero snowfall."""
         last_snowfall_of_consequence_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date', find_last=True), 
+            timespan_data=get_timespan_data(df, year, 'obs_date', find_last=True), 
             timespan=3, 
             date_column='obs_date',
             search_column='snowfall', 
@@ -186,7 +189,7 @@ def main():
 
         """Find the date when temp_avg has been above 0.0 for 7 consecutive days."""
         scandi_start_of_spring_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date'), 
+            timespan_data=get_timespan_data(df, year, 'obs_date'), 
             timespan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
@@ -197,7 +200,7 @@ def main():
 
         """Find the date when temp_avg has been above 10.0 for 7 consecutive days."""
         scandi_start_of_summer_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date'), 
+            timespan_data=get_timespan_data(df, year, 'obs_date'), 
             timespan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
@@ -230,7 +233,7 @@ def main():
 
         """Find the date when the average temp_avg has been above 0.0 for 7 consecutive days."""
         scandi_start_of_spring_avg_based_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date'), 
+            timespan_data=get_timespan_data(df, year, 'obs_date'), 
             timespan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
@@ -241,7 +244,7 @@ def main():
 
         """Find the date when the average temp_avg has been above 10.0 for 7 consecutive days."""
         scandi_start_of_summer_avg_based_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date'), 
+            timespan_data=get_timespan_data(df, year, 'obs_date'), 
             timespan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
@@ -252,7 +255,7 @@ def main():
         
         """Find the date when snowdepth is not 0.0 by scanning backwards from June of the following year."""
         snow_gone_date = find_in(
-            timespan_data=get_timespan_data(df, year, jst, 'obs_date', find_last=True), 
+            timespan_data=get_timespan_data(df, year, 'obs_date', find_last=True), 
             timespan=1, 
             date_column='obs_date', 
             search_column='snowdepth', 
@@ -265,13 +268,12 @@ def main():
         # SNOWDEPTHS
 
         """Find the dates when snowdepths first reach 100, 200, 300, 400, and 500 cm."""
-        snowdepth_timespan = get_timespan_data(df, year, jst, 'obs_date', custom_start_month=11, custom_start_day=1)
         depths = [100, 200, 300, 400, 500]
         snowdepth_date = {}
 
         for depth in depths:
             snowdepth_date[depth] = find_in(
-                timespan_data=snowdepth_timespan, 
+                timespan_data=season_timespan, 
                 timespan=1, 
                 date_column='obs_date', 
                 search_column='snowdepth', 
@@ -281,11 +283,34 @@ def main():
             )
 
         """ Return the highest value of snowdepth for the season """
-        max_snowdepth = snowdepth_timespan['snowdepth'].max()
+        max_snowdepth = season_timespan['snowdepth'].max()
         max_snowdepth = None if pd.isna(max_snowdepth) else max_snowdepth
 
         """ Calculate total snowfall for the season """
-        total_snowfall = snowdepth_timespan['snowfall'].sum()
+        total_snowfall = season_timespan['snowfall'].sum()
+
+
+        """ Return the highest & lowest values of temp_hgh & temp_low for the season """
+        max_temp_avg = season_timespan['temp_avg'].max()
+        max_temp_avg = None if pd.isna(max_temp_avg) else max_temp_avg
+        min_temp_avg = season_timespan['temp_avg'].min()
+        min_temp_avg = None if pd.isna(min_temp_avg) else min_temp_avg
+        avg_temp_avg = season_timespan['temp_avg'].mean()
+        avg_temp_avg = None if pd.isna(avg_temp_avg) else round(avg_temp_avg, 1)
+
+        max_temp_hgh = season_timespan['temp_hgh'].max()
+        max_temp_hgh = None if pd.isna(max_temp_hgh) else max_temp_hgh
+        min_temp_hgh = season_timespan['temp_hgh'].min()
+        min_temp_hgh = None if pd.isna(min_temp_hgh) else min_temp_hgh
+        avg_temp_hgh = season_timespan['temp_hgh'].mean()
+        avg_temp_hgh = None if pd.isna(avg_temp_hgh) else round(avg_temp_hgh, 1)
+
+        max_temp_low = season_timespan['temp_low'].max()
+        max_temp_low = None if pd.isna(max_temp_low) else max_temp_low
+        min_temp_low = season_timespan['temp_low'].min()
+        min_temp_low = None if pd.isna(min_temp_low) else min_temp_low
+        avg_temp_low = season_timespan['temp_low'].mean()
+        avg_temp_low = None if pd.isna(avg_temp_low) else round(avg_temp_low, 1)
 
 
         next_year_abb = str(int(year) + 1)[-2:]
@@ -316,6 +341,17 @@ def main():
                 'winter_avg': scandi_start_of_winter_avg_based_date,
                 'spring_avg': scandi_start_of_spring_avg_based_date,
                 'summer_avg': scandi_start_of_summer_avg_based_date
+            },
+            'temps': {
+                'avg_temp_avg': avg_temp_avg,
+                'max_temp_avg': max_temp_avg,
+                'min_temp_avg': min_temp_avg,
+                'avg_temp_hgh': avg_temp_hgh,
+                'max_temp_hgh': max_temp_hgh,
+                'min_temp_hgh': min_temp_hgh,
+                'avg_temp_low': avg_temp_low,
+                'max_temp_low': max_temp_low,
+                'min_temp_low': min_temp_low
             }
         }
 
