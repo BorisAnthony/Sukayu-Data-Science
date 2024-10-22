@@ -401,7 +401,7 @@ def main():
         }
 
     # Write the dates to a JSON file
-    with open('../outputs/Sukayu-Seasonal-Dates.json', 'w') as file:
+    with open('../outputs/Sukayu-Winters-Data.json', 'w') as file:
         json.dump(snowfall_dates, file, indent=2)
 
     # Close the connection

@@ -8,7 +8,7 @@ As one of the oldest official weather stations in Japan, and also at the foot of
 
 ---
 
-# What are some of the data in<br>”[Sukayu-Seasonal-Dates.json](./outputs/Sukayu-Seasonal-Dates.json)"
+# What are some of the data in<br>”[Sukayu Winters Data](./outputs/Sukayu-Winters-Data.json)"
 
 ## "Scandi Seasons"
 
