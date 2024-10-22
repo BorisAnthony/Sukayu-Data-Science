@@ -471,7 +471,8 @@ def main():
     print("DATA - Processing complete")
 
     # Write the dates to a JSON file
-    output_json_path = os.path.join(output_path, 'Sukayu-Winters-Data.json')
+    output_path_derived = os.path.join(output_path, 'derived')
+    output_json_path = os.path.join(output_path_derived, 'Sukayu-Winters-Data.json')
     with open(output_json_path, 'w') as file:
         json.dump(snowfall_dates, file, indent=2)
         print(f"JSON - DATA - File written")
@@ -484,7 +485,7 @@ def main():
     df_snowfall_dates = pd.DataFrame.from_dict(flattened_data, orient='index')
 
     # Write the DataFrame to a CSV file and zip it
-    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path, label='DATA -')
+    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -')
 
 
 
@@ -523,9 +524,9 @@ def main():
     if df_dump.empty:
         conn.close()
         return
-
+    output_path_jma = os.path.join(output_path, 'jma')
     # Write the data to a tab-delimited CSV file and zip it
-    write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path, label='DB -')
+    write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path_jma, label='DB -')
 
     # Close the connection
     conn.close()
