@@ -1,7 +1,9 @@
+import os
+import zipfile
+import pytz
 import sqlite3
 import pandas as pd
 import json
-import pytz
 import operator
 
 # Define the JST timezone
@@ -83,14 +85,41 @@ def find_in(timespan_data, timespan, date_column, search_column, all_or_mean, th
     
     return None  # Return None if no condition is met
 
+
+
+""" UDF for SQLite """
+def calc_amplitude(a, b):
+    if a is None or b is None:
+        return None
+    return round(a - b, 1)
+
+
+
 def main():
-    db_path = '../database/sukayu_historical_obs_daily-expanded.sqlite'
-    query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
+
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     
+    # Define paths relative to the script's directory
+    db_path = os.path.join(script_dir, '../database/sukayu_historical_obs_daily.sqlite')
+    output_path = os.path.join(script_dir, '../outputs')
+
+    # query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
+    query = """
+    SELECT obs_date, temp_avg, temp_hgh, temp_low, 
+        calc_amplitude(temp_hgh, temp_low) AS temp_amp, 
+        snowfall, snowdepth, 
+        calc_amplitude(wind_gust_speed, wind_avg_speed) AS wind_speed_amp 
+    FROM obs_sukayu_daily
+    """
+
     # Connect to the SQLite database
     conn = connect_to_db(db_path)
     if conn is None:
         return
+
+    # Register the UDF with the SQLite connection
+    conn.create_function("calc_amplitude", 2, calc_amplitude)
 
     # Query the data
     df = query_data(conn, query)
@@ -401,8 +430,35 @@ def main():
         }
 
     # Write the dates to a JSON file
-    with open('../outputs/Sukayu-Winters-Data.json', 'w') as file:
+    output_json_path = os.path.join(output_path, 'Sukayu-Winters-Data.json')
+    with open(output_json_path, 'w') as file:
         json.dump(snowfall_dates, file, indent=2)
+        # print(f"JSON Data written to {output_json_path}")
+
+
+    # Dump a CSV export of the whole dataset
+    # Query the data
+    dump_query = "SELECT * FROM obs_sukayu_daily"
+    df = query_data(conn, dump_query)
+    if df.empty:
+        conn.close()
+        return
+
+    # Write the data to a tab-delimited CSV file
+    output_csv_path = os.path.join(output_path, 'sukayu_historical_obs_daily.csv')
+    df.to_csv(output_csv_path, sep='\t', index=False)
+    # print(f"CSV Data written")
+
+    # Zip the CSV file
+    output_zip_path = os.path.join(output_path, 'sukayu_historical_obs_daily.csv.zip')
+    with zipfile.ZipFile(output_zip_path, 'w') as zipf:
+        zipf.write(output_csv_path, os.path.basename(output_csv_path))
+        # print(f"Zipped CSV Data written")
+
+    # Remove the original CSV file after zipping
+    os.remove(output_csv_path)
+    # print("Original CSV Data removed")
+
 
     # Close the connection
     conn.close()
