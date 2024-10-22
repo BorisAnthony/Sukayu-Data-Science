@@ -1,4 +1,5 @@
 import os
+import shutil
 import zipfile
 import pytz
 import sqlite3
@@ -94,6 +95,7 @@ def calc_amplitude(a, b):
     return round(a - b, 1)
 
 
+
 """ Flatten the dictionary before trying to Panda it into CSV """
 def flatten_dict(d, parent_key='', sep='_'):
     items = []
@@ -104,6 +106,26 @@ def flatten_dict(d, parent_key='', sep='_'):
         else:
             items.append((new_key, v))
     return dict(items)
+
+
+def flatten_seasons_data(seasons_data):
+    flattened_data = []
+    for season, data in seasons_data.items():
+        flat_data = {'season': season}  # Assign "season" first
+        flat_data.update(flatten_dict(data))  # Update with flattened data
+        flattened_data.append(flat_data)
+    return flattened_data
+
+
+
+
+def write_to_sqlite(data, table_name, sqlite_conn):
+    """
+    Write data to a SQLite database table.
+    """
+    # Write the data to the SQLite table
+    data.to_sql(table_name, con=sqlite_conn, if_exists='replace', index=False)
+    print(f"SQLite - Table '{table_name}' written successfully")
 
 
 
@@ -134,6 +156,15 @@ def write_and_zip_csv(data, filename, output_path, include_file_path=None, label
     os.remove(output_csv_path)
     print(f"CSV  - {label} Original removed")
 
+def delete_extra_tables(cursor):
+    """Delete any tables other than obs_sukayu_daily."""
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = cursor.fetchall()
+    for table in tables:
+        # if table[0] != 'obs_sukayu_daily':
+        if 'sqlite_stat' in table[0]:
+            cursor.execute(f"DROP TABLE {table[0]}")
+
 
 def main():
 
@@ -141,7 +172,12 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Define paths relative to the script's directory
-    db_path = os.path.join(script_dir, '../database/sukayu_historical_obs_daily.sqlite')
+    src_db_path = os.path.join(script_dir, '../database/src/sukayu_historical_obs_daily.sqlite')
+    db_path = os.path.join(script_dir, '../database/dist/sukayu_historical_obs_daily_plus.sqlite')
+
+    # Make a working copy of the database
+    shutil.copyfile(src_db_path, db_path)
+
     output_path = os.path.join(script_dir, '../outputs')
     cl_path = os.path.join(script_dir, '../Citation_and_License.md')
 
@@ -188,7 +224,7 @@ def main():
     oct_dec_df = extract_year(oct_dec_df, 'obs_date', 'year')
 
     # Initialize a dictionary to store the first and last snowfall dates
-    snowfall_dates = {}
+    seasons_data = {}
 
     # Group the data by year and find the first and last snowfall dates
     for year, group in oct_dec_df.groupby('year'):
@@ -415,7 +451,7 @@ def main():
         # print(season_label)
 
         # Store the dates in the dictionary
-        snowfall_dates[season_label] = {
+        seasons_data[season_label] = {
             'snowfalls': {
                 'fst': first_snowfall_date,
                 'lst': last_snowfall_date,
@@ -482,20 +518,27 @@ def main():
     output_path_derived = os.path.join(output_path, 'derived')
     output_json_path = os.path.join(output_path_derived, 'Sukayu-Winters-Data.json')
     with open(output_json_path, 'w') as file:
-        json.dump(snowfall_dates, file, indent=2)
+        json.dump(seasons_data, file, indent=2)
         print(f"JSON - DATA - File written")
 
 
-    # Flatten the snowfall_dates dictionary
-    flattened_data = {season: flatten_dict(data) for season, data in snowfall_dates.items()}
+    # # Flatten the seasons_data dictionary
+    # flattened_data = {season: flatten_dict(data) for season, data in seasons_data.items()}
 
-    # Convert the flattened dictionary to a DataFrame
-    df_snowfall_dates = pd.DataFrame.from_dict(flattened_data, orient='index')
+    # # Convert the flattened dictionary to a DataFrame
+    # df_seasons_data = pd.DataFrame.from_dict(flattened_data, orient='index')
+
+    # Flatten the seasons_data dictionary
+    flattened_data = flatten_seasons_data(seasons_data)
+
+    # Convert the flattened list of dictionaries to a DataFrame
+    df_seasons_data = pd.DataFrame(flattened_data)
+
 
     # Write the DataFrame to a CSV file and zip it
-    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -', include_file_path=cl_path)
+    write_and_zip_csv(data=df_seasons_data, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -', include_file_path=cl_path)
 
-
+    write_to_sqlite(df_seasons_data, 'sukayu_winters_data', conn)
 
     # __________________________________________________________________________
     # MARK: DB Cleanup
@@ -511,6 +554,9 @@ def main():
     # Run an optimization
     cursor.execute("PRAGMA optimize;")
     print("DB   - Optimization complete")
+
+    # Step 11: Delete any extra tables
+    delete_extra_tables(cursor)
 
     # Commit any transactions
     conn.commit()
