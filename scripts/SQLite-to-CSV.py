@@ -21,7 +21,7 @@ def query_all_data(conn):
         return pd.DataFrame()
 
 def main():
-    db_path = '../database/sukayu_historical_obs_daily.sqlite'
+    db_path = '../database/sukayu_historical_obs_daily-expanded.sqlite'
     
     # Connect to the SQLite database
     conn = connect_to_db(db_path)
