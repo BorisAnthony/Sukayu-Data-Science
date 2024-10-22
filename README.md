@@ -32,7 +32,7 @@ We calculate 2 versions, one based on the daily mean temperature for 7 days, so:
 
 ## Snowfalls
 
-	- First and last snowfalls are simply the first time in the last quarter of a year, and the last day in the first quarter of the following year, when a snowfall greater than 0 cm was reported.
+- First and last snowfalls are simply the first time in the last quarter of a year, and the last day in the first quarter of the following year, when a snowfall greater than 0 cm was reported.
 
 - “First and Last of Substance” are similar to the "Scandi Seasons", where we look for the **first and last time 3 days in a row of at least 5.0 cm snowfall** were recorded that season.
 
