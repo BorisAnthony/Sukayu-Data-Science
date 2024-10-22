@@ -282,6 +282,7 @@ def main():
 
         """ Return the highest value of snowdepth for the season """
         max_snowdepth = snowdepth_timespan['snowdepth'].max()
+        max_snowdepth = None if pd.isna(max_snowdepth) else max_snowdepth
 
         """ Calculate total snowfall for the season """
         total_snowfall = snowdepth_timespan['snowfall'].sum()
