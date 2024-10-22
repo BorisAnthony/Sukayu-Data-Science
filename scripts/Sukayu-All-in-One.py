@@ -107,7 +107,7 @@ def flatten_dict(d, parent_key='', sep='_'):
 
 
 
-def write_and_zip_csv(data, filename, output_path, label='', sep='\t', index=True):
+def write_and_zip_csv(data, filename, output_path, include_file_path=None, label='', sep='\t', index=True):
     """
     Write data to a tab-delimited CSV file, zip it, and remove the original CSV file.
     """
@@ -120,12 +120,19 @@ def write_and_zip_csv(data, filename, output_path, label='', sep='\t', index=Tru
     output_zip_path = os.path.join(output_path, f'{filename}.csv.zip')
     with zipfile.ZipFile(output_zip_path, 'w') as zipf:
         zipf.write(output_csv_path, os.path.basename(output_csv_path))
+
+        if include_file_path is not None:
+            if os.path.exists(include_file_path):
+                zipf.write(include_file_path, os.path.basename(include_file_path))
+                print(f"ZIP  - {label} Extra file included")
+            else:
+                print(f"ZIP  - {label} Extra file not found")
+        
         print(f"ZIP  - {label} File written")
 
     # Remove the original CSV file after zipping
     os.remove(output_csv_path)
     print(f"CSV  - {label} Original removed")
-
 
 
 def main():
@@ -136,6 +143,7 @@ def main():
     # Define paths relative to the script's directory
     db_path = os.path.join(script_dir, '../database/sukayu_historical_obs_daily.sqlite')
     output_path = os.path.join(script_dir, '../outputs')
+    cl_path = os.path.join(script_dir, '../Citation_and_License.md')
 
     # query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
     query = """
@@ -485,7 +493,7 @@ def main():
     df_snowfall_dates = pd.DataFrame.from_dict(flattened_data, orient='index')
 
     # Write the DataFrame to a CSV file and zip it
-    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -')
+    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -', include_file_path=cl_path)
 
 
 
@@ -526,7 +534,7 @@ def main():
         return
     output_path_jma = os.path.join(output_path, 'jma')
     # Write the data to a tab-delimited CSV file and zip it
-    write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path_jma, label='DB -')
+    write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path_jma, label='DB -', include_file_path=cl_path)
 
     # Close the connection
     conn.close()
