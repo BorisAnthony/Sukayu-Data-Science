@@ -159,7 +159,9 @@ def main():
             threshold=0.0, 
             comparison='gt'
             )
+        # Snowfall total is calculated at the end of this list
         
+
         """Find the date when temp_avg has been below 10.0 for 7 consecutive days."""
         scandi_start_of_autumn_date = find_in(
             timespan_data=group, 
@@ -278,16 +280,28 @@ def main():
                 comparison='ge'
             )
 
+        """ Return the highest value of snowdepth for the season """
+        max_snowdepth = snowdepth_timespan['snowdepth'].max()
+
+        """ Calculate total snowfall for the season """
+        total_snowfall = snowdepth_timespan['snowfall'].sum()
+
+
+        next_year_abb = str(int(year) + 1)[-2:]
+        season_label = f"{year}-{next_year_abb}"
+        # print(season_label)
 
         # Store the dates in the dictionary
-        snowfall_dates[year] = {
+        snowfall_dates[season_label] = {
             'snowfalls': {
                 'first': first_snowfall_date,
                 'last': last_snowfall_date,
                 'first_of_consequence': first_snowfall_of_consequence_date,
-                'last_of_consequence': last_snowfall_of_consequence_date
+                'last_of_consequence': last_snowfall_of_consequence_date,
+                'total': total_snowfall
             },
             'snowdepths': {
+                'max': max_snowdepth,
                 **{f'{depth}': snowdepth_date[depth] for depth in depths},
                 'all_gone': snow_gone_date
 
