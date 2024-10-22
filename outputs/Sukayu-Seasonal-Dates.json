@@ -1268,7 +1268,7 @@
       "total": 0.0
     },
     "snowdepths": {
-      "max": NaN,
+      "max": null,
       "100": null,
       "200": null,
       "300": null,
