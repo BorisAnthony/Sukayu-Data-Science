@@ -84,8 +84,8 @@ def find_in(timespan_data, timespan, date_column, search_column, all_or_mean, th
     return None  # Return None if no condition is met
 
 def main():
-    db_path = '../database/sukayu_historical_obs_daily.sqlite'
-    query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, snowfall, snowdepth FROM obs_sukayu_daily"
+    db_path = '../database/sukayu_historical_obs_daily-expanded.sqlite'
+    query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
     
     # Connect to the SQLite database
     conn = connect_to_db(db_path)
@@ -148,7 +148,7 @@ def main():
             date_column='obs_date', 
             search_column='snowfall', 
             all_or_mean='all', 
-            threshold=0.0, 
+            threshold=5.0, 
             comparison='gt'
             )
 
@@ -159,7 +159,7 @@ def main():
             date_column='obs_date',
             search_column='snowfall', 
             all_or_mean='all', 
-            threshold=0.0, 
+            threshold=5.0, 
             comparison='gt'
             )
         # Snowfall total is calculated at the end of this list
@@ -289,6 +289,12 @@ def main():
         """ Calculate total snowfall for the season """
         total_snowfall = season_timespan['snowfall'].sum()
 
+        """ Calculate the count of instances where snowfall was >= 10 """
+        snowfall_levels = [10, 20, 30, 40, 50, 60, 70, 80]
+        snowfall_level_counts = {}
+        for level in snowfall_levels:
+            snowfall_level_counts[level] = int((season_timespan['snowfall'] >= level).sum())
+
 
         """ Return the highest & lowest values of temp_hgh & temp_low for the season """
         max_temp_avg = season_timespan['temp_avg'].max()
@@ -312,6 +318,20 @@ def main():
         avg_temp_low = season_timespan['temp_low'].mean()
         avg_temp_low = None if pd.isna(avg_temp_low) else round(avg_temp_low, 1)
 
+        max_temp_amp = season_timespan['temp_amp'].max()
+        max_temp_amp = None if pd.isna(max_temp_amp) else max_temp_amp
+        min_temp_amp = season_timespan['temp_amp'].min()
+        min_temp_amp = None if pd.isna(min_temp_amp) else min_temp_amp
+        avg_temp_amp = season_timespan['temp_amp'].mean()
+        avg_temp_amp = None if pd.isna(avg_temp_amp) else round(avg_temp_amp, 1)
+
+        max_ws_amp = season_timespan['wind_speed_amp'].max()
+        max_ws_amp = None if pd.isna(max_ws_amp) else max_ws_amp
+        min_ws_amp = season_timespan['wind_speed_amp'].min()
+        min_ws_amp = None if pd.isna(min_ws_amp) else min_ws_amp
+        avg_ws_amp = season_timespan['wind_speed_amp'].mean()
+        avg_ws_amp = None if pd.isna(avg_ws_amp) else round(avg_ws_amp, 1)
+
 
         next_year_abb = str(int(year) + 1)[-2:]
         season_label = f"{year}-{next_year_abb}"
@@ -320,38 +340,63 @@ def main():
         # Store the dates in the dictionary
         snowfall_dates[season_label] = {
             'snowfalls': {
-                'first': first_snowfall_date,
-                'last': last_snowfall_date,
-                'first_of_consequence': first_snowfall_of_consequence_date,
-                'last_of_consequence': last_snowfall_of_consequence_date,
-                'total': total_snowfall
+                'fst': first_snowfall_date,
+                'lst': last_snowfall_date,
+                'fst_subs': first_snowfall_of_consequence_date,
+                'lst_subs': last_snowfall_of_consequence_date,
+                'total': total_snowfall,
+                'days_over': {
+                    **{f'{level}': snowfall_level_counts[level] for level in snowfall_levels}
+                }
             },
             'snowdepths': {
                 'max': max_snowdepth,
                 **{f'{depth}': snowdepth_date[depth] for depth in depths},
-                'all_gone': snow_gone_date
+                'fin': snow_gone_date
 
             },
             'scandi_season_starts': {
-                'autumn_all': scandi_start_of_autumn_date,
-                'winter_all': scandi_start_of_winter_date,
-                'spring_all': scandi_start_of_spring_date,
-                'summer_all': scandi_start_of_summer_date,
-                'autumn_avg': scandi_start_of_autumn_avg_based_date,
-                'winter_avg': scandi_start_of_winter_avg_based_date,
-                'spring_avg': scandi_start_of_spring_avg_based_date,
-                'summer_avg': scandi_start_of_summer_avg_based_date
+                'strict' : {
+                    'aut': scandi_start_of_autumn_date,
+                    'win': scandi_start_of_winter_date,
+                    'spr': scandi_start_of_spring_date,
+                    'sum': scandi_start_of_summer_date
+                },
+                'avg_based': {
+                    'aut': scandi_start_of_autumn_avg_based_date,
+                    'win': scandi_start_of_winter_avg_based_date,
+                    'spr': scandi_start_of_spring_avg_based_date,
+                    'sum': scandi_start_of_summer_avg_based_date
+                }
             },
             'temps': {
-                'avg_temp_avg': avg_temp_avg,
-                'max_temp_avg': max_temp_avg,
-                'min_temp_avg': min_temp_avg,
-                'avg_temp_hgh': avg_temp_hgh,
-                'max_temp_hgh': max_temp_hgh,
-                'min_temp_hgh': min_temp_hgh,
-                'avg_temp_low': avg_temp_low,
-                'max_temp_low': max_temp_low,
-                'min_temp_low': min_temp_low
+                'avg': {
+                    'avg': avg_temp_avg,
+                    'max': max_temp_avg,
+                    'min': min_temp_avg
+                },
+                'hgh': {
+                    'avg': avg_temp_hgh,
+                    'max': max_temp_hgh,
+                    'min': min_temp_hgh
+                },
+                'low': {
+                    'avg': avg_temp_low,
+                    'max': max_temp_low,
+                    'min': min_temp_low
+                },
+                'amp': {
+                    'avg': avg_temp_amp,
+                    'max': max_temp_amp,
+                    'min': min_temp_amp
+                }
+            },
+            'winds': {
+                'amp': {
+                    'avg': avg_ws_amp,
+                    'max': max_ws_amp,
+                    'min': min_ws_amp
+                }
             }
         }
 
