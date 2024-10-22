@@ -94,6 +94,39 @@ def calc_amplitude(a, b):
     return round(a - b, 1)
 
 
+""" Flatten the dictionary before trying to Panda it into CSV """
+def flatten_dict(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+
+def write_and_zip_csv(data, filename, output_path, label='', sep='\t', index=True):
+    """
+    Write data to a tab-delimited CSV file, zip it, and remove the original CSV file.
+    """
+    # Write the data to a tab-delimited CSV file
+    output_csv_path = os.path.join(output_path, f'{filename}.csv')
+    data.to_csv(output_csv_path, sep=sep, index=index)
+    print(f"CSV  - {label} File written")
+
+    # Zip the CSV file
+    output_zip_path = os.path.join(output_path, f'{filename}.csv.zip')
+    with zipfile.ZipFile(output_zip_path, 'w') as zipf:
+        zipf.write(output_csv_path, os.path.basename(output_csv_path))
+        print(f"ZIP  - {label} File written")
+
+    # Remove the original CSV file after zipping
+    os.remove(output_csv_path)
+    print(f"CSV  - {label} Original removed")
+
+
 
 def main():
 
@@ -117,6 +150,11 @@ def main():
     conn = connect_to_db(db_path)
     if conn is None:
         return
+    print("DB   - Connection established")
+    
+
+    # Create a cursor object
+    cursor = conn.cursor()
 
     # Register the UDF with the SQLite connection
     conn.create_function("calc_amplitude", 2, calc_amplitude)
@@ -126,6 +164,8 @@ def main():
     if df.empty:
         conn.close()
         return
+    print("DB   - Data queried")
+
 
     # Convert the date column to datetime and set timezone to JST
     df = convert_to_datetime(df, 'obs_date', jst)
@@ -428,37 +468,64 @@ def main():
                 }
             }
         }
+    print("DATA - Processing complete")
 
     # Write the dates to a JSON file
     output_json_path = os.path.join(output_path, 'Sukayu-Winters-Data.json')
     with open(output_json_path, 'w') as file:
         json.dump(snowfall_dates, file, indent=2)
-        # print(f"JSON Data written to {output_json_path}")
+        print(f"JSON - DATA - File written")
 
 
+    # Flatten the snowfall_dates dictionary
+    flattened_data = {season: flatten_dict(data) for season, data in snowfall_dates.items()}
+
+    # Convert the flattened dictionary to a DataFrame
+    df_snowfall_dates = pd.DataFrame.from_dict(flattened_data, orient='index')
+
+    # Write the DataFrame to a CSV file and zip it
+    write_and_zip_csv(data=df_snowfall_dates, filename='Sukayu-Winters-Data', output_path=output_path, label='DATA -')
+
+
+
+    # __________________________________________________________________________
+    # MARK: DB Cleanup
+    # Run an integrity check
+    cursor.execute("PRAGMA integrity_check;")
+    integrity_result = cursor.fetchone()
+    if integrity_result[0] != 'ok':
+        print("Integrity check failed. Aborting.")
+        conn.close()
+        return
+    print("DB   - Integrity check passed")
+    
+    # Run an optimization
+    cursor.execute("PRAGMA optimize;")
+    print("DB   - Optimization complete")
+
+    # Commit any transactions
+    conn.commit()
+
+    # Compact the database
+    cursor.execute("VACUUM main;")
+    cursor.execute("VACUUM temp;")
+    print("DB   - Vacuum complete")
+
+
+
+
+    # __________________________________________________________________________
+    # MARK: DB Dump to Zipped CSV
     # Dump a CSV export of the whole dataset
     # Query the data
     dump_query = "SELECT * FROM obs_sukayu_daily"
-    df = query_data(conn, dump_query)
-    if df.empty:
+    df_dump = query_data(conn, dump_query)
+    if df_dump.empty:
         conn.close()
         return
 
-    # Write the data to a tab-delimited CSV file
-    output_csv_path = os.path.join(output_path, 'sukayu_historical_obs_daily.csv')
-    df.to_csv(output_csv_path, sep='\t', index=False)
-    # print(f"CSV Data written")
-
-    # Zip the CSV file
-    output_zip_path = os.path.join(output_path, 'sukayu_historical_obs_daily.csv.zip')
-    with zipfile.ZipFile(output_zip_path, 'w') as zipf:
-        zipf.write(output_csv_path, os.path.basename(output_csv_path))
-        # print(f"Zipped CSV Data written")
-
-    # Remove the original CSV file after zipping
-    os.remove(output_csv_path)
-    # print("Original CSV Data removed")
-
+    # Write the data to a tab-delimited CSV file and zip it
+    write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path, label='DB -')
 
     # Close the connection
     conn.close()
