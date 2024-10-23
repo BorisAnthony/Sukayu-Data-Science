@@ -250,10 +250,10 @@ def main():
 
         """Find the dates when snowdepths first reach 100, 200, 300, 400, and 500 cm."""
         depths = [100, 200, 300, 400, 500]
-        snowdepth_date = {}
+        snowdepth_date_first = {}
 
         for depth in depths:
-            snowdepth_date[depth] = find_in(
+            snowdepth_date_first[depth] = find_in(
                 timespan_data=season_timespan, 
                 timespan=1, 
                 date_column='obs_date', 
@@ -262,6 +262,21 @@ def main():
                 threshold=depth,
                 comparison='ge'
             )
+        depths_backwards = [500, 400, 300, 200, 100]
+        snowdepth_date_last = {}
+        for depth in depths_backwards:
+            snowdepth_date_last[depth] = find_in(
+                timespan_data=get_timespan_data(df, year, 'obs_date', find_last=True), 
+                timespan=1, 
+                date_column='obs_date', 
+                search_column='snowdepth', 
+                all_or_mean='any', 
+                threshold=depth,
+                comparison='ge'
+            )
+
+
+
 
         """ Return the highest value of snowdepth for the season """
         max_snowdepth = season_timespan['snowdepth'].max()
@@ -303,7 +318,12 @@ def main():
             },
             'snowdepths': {
                 'max': max_snowdepth,
-                **{f'{depth}': snowdepth_date[depth] for depth in depths},
+                'first': {
+                    **{f'{depth}': snowdepth_date_first[depth] for depth in depths},
+                },
+                'last': {
+                    **{f'{depth}': snowdepth_date_last[depth] for depth in depths_backwards},
+                },
                 'fin': snow_gone_date
 
             },
