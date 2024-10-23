@@ -2,7 +2,7 @@
 
 # Sukayu Seasonal Weather Observations Analysis
 
-This project analyses various databases of historical weather observation data from the [JMA (Japan Meteorological Association)](https://www.jma.go.jp/jma/indexe.html) station at [Sukayu Onsen, Aomori, Japan](https://www.jma.go.jp/bosai/amedas/#area_type=offices&area_code=020000&amdno=31482&format=table1h&lang=en&elems=53600).
+This project analyses various databases of historical weather observation data from the [JMA (Japan Meteorological Agency)](https://www.jma.go.jp/jma/indexe.html) station at [Sukayu Onsen, Aomori, Japan](https://www.jma.go.jp/bosai/amedas/#area_type=offices&area_code=020000&amdno=31482&format=table1h&lang=en&elems=53600).
 
 As one of the oldest official weather stations in Japan, and also at the foot of the Hakkōda Mountains, known to be one of the *snowiest places in the country*, we hope to glean some trends in the **effects of climate change on the area's winter mountain sport seasons**.
 
