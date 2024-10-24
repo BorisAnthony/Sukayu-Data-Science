@@ -8,10 +8,22 @@ import shutil
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from utils import (
-    connect_to_db, query_data, convert_to_datetime, clean_column_data,
-    filter_data_by_month, extract_year, get_timespan_data, find_in,
-    calc_amplitude, flatten_dict, flatten_seasons_data, write_to_sqlite,
-    write_and_zip_csv, delete_extra_tables, calculate_stats, jst
+    connect_to_db,
+    query_data,
+    convert_to_datetime,
+    clean_column_data,
+    filter_data_by_month,
+    extract_year,
+    get_timespan_data,
+    find_in,
+    calc_amplitude,
+    flatten_dict,
+    flatten_seasons_data,
+    write_to_sqlite,
+    write_and_zip_csv,
+    delete_extra_tables,
+    calculate_stats,
+    jst
 )
 
 
