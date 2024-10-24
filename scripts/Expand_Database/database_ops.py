@@ -1,12 +1,6 @@
 import pandas as pd
 
 
-def column_exists(cursor, table_name, column_name):
-    """Check if a column exists in a table."""
-    cursor.execute(f"PRAGMA table_info({table_name})")
-    columns = [info[1] for info in cursor.fetchall()]
-    return column_name in columns
-
 def create_new_table(cursor):
     """Create a new table with the desired column order."""
     cursor.execute("""
@@ -122,9 +116,9 @@ def update_rows(cursor):
 
 def calculate_and_update_rolling_averages(cursor):
     """Calculate and update 7-day centered rolling averages for temp_avg, temp_hgh, and temp_low."""
+
     # Load data into a DataFrame
-    df = pd.read_sql_query("SELECT rowid, obs_date, temp_avg, temp_hgh, temp_low FROM obs_sukayu_daily_new", cursor.connection)
-    
+    df = pd.read_sql_query("SELECT rowid, obs_date, temp_avg, temp_hgh, temp_low FROM obs_sukayu_daily_new", cursor.connection)    
     # Calculate centered rolling Averages with a window of 7 days and min_periods set to 1
     df['temp_avg_7dcra'] = round(df['temp_avg'].rolling(window=7, center=True, min_periods=1).mean(), 1)
     df['temp_hgh_7dcra'] = round(df['temp_hgh'].rolling(window=7, center=True, min_periods=1).mean(), 1)
@@ -143,17 +137,3 @@ def calculate_and_update_rolling_averages(cursor):
               temp_avg_7dcra_std = ?, temp_hgh_7dcra_std = ?, temp_low_7dcra_std = ?
             WHERE rowid = ?
         """, (row['temp_avg_7dcra'], row['temp_hgh_7dcra'], row['temp_low_7dcra'], row['temp_avg_7dcra_std'], row['temp_hgh_7dcra_std'], row['temp_low_7dcra_std'], row['rowid']))
-
-
-
-
-
-
-
-def delete_extra_tables(cursor):
-    """Delete any tables other than obs_sukayu_daily."""
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-    tables = cursor.fetchall()
-    for table in tables:
-        if table[0] != 'obs_sukayu_daily':
-            cursor.execute(f"DROP TABLE {table[0]}")
