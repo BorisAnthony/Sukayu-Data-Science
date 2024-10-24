@@ -1,7 +1,11 @@
 import os
+import sys
 import pandas as pd
 import json
 import shutil
+
+# Add the parent directory of utils.py to the system path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from utils import (
     connect_to_db, query_data, convert_to_datetime, clean_column_data,
@@ -11,28 +15,24 @@ from utils import (
 )
 
 
-def main():
-
+def process_data():
 
 
     # Get the directory of the current script
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-
     # Define paths relative to the script's directory
-    src_db_path = os.path.join(script_dir, '../database/src/sukayu_historical_obs_daily.sqlite')
-    db_path = os.path.join(script_dir, '../database/dist/sukayu_historical_obs_daily_plus.sqlite')
-
+    src_db_path = os.path.join(script_dir, '../../database/src/sukayu_historical_obs_daily_expanded.sqlite')
+    db_path = os.path.join(script_dir, '../../database/dist/sukayu_historical_obs_daily_everything.sqlite')
 
 
     # Make a working copy of the database
     shutil.copyfile(src_db_path, db_path)
 
 
-
-    output_path = os.path.join(script_dir, '../outputs')
-    cl_path     = os.path.join(script_dir, '../Citation_and_License.md')
+    output_path = os.path.join(script_dir, '../../outputs')
+    cl_path     = os.path.join(script_dir, '../../Citation_and_License.md')
 
 
 
@@ -453,5 +453,8 @@ def main():
     # Close the connection
     conn.close()
 
+    pass
+
+
 if __name__ == "__main__":
-    main()
+    process_data()
