@@ -63,8 +63,6 @@ We find or calculate the seasonal minima, maxima and averages (means) of the dai
 
 # Some things to notice
 
-- Until 2008, it was very rare, almost unheard of, to have 7 consecutive days in summer where the daily average temperature remained above 10 °C. In those cases, "**Scandi Summer**" never even started!
-
 - In local media, the first snowfall visible on the mountains is often reported (*and we include similar “first reported snowfall” in our analysis*). However, the “**first snowfall of substance**”—which we define for our purposes as “the first time in a season when it snows at least 5 cm, at least 3 days in a row”—is much more significant and indicative of the start (*and end, in reverse*) of a snow season.
 
 
