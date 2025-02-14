@@ -1,50 +1,64 @@
 import os
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 import json
 
+# Add the parent directory of utils.py to the system path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Add the utilities directory to the system path
+script_dir = os.path.dirname(os.path.abspath(__file__))
+utilities_dir = os.path.join(script_dir, '../utilities')
+sys.path.append(utilities_dir)
+
+from utils import (db_connect, db_query_data)
+
+
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+db_path = os.path.join(script_dir, '../../database/dist/sukayu_historical_obs_daily_everything.sqlite')
+output_path = os.path.join(script_dir, '../../outputs/heatmaps')
+
+
 def generate_heatmaps():
-    # Load the JSON data
-    with open('../../outputs/derived/Sukayu-Winters-Data.json', 'r') as file:
-        data = json.load(file)
+    # Connect to the database
+    conn = db_connect(db_path)
+    if conn is None:
+        return
+
+    # Query the data
+    query = """
+    SELECT 
+        obs_date, 
+        temp_avg 
+    FROM 
+        obs_sukayu_daily
+    """
+    df = db_query_data(conn, query)
+
+    # Close the database connection
+    conn.close()
 
     # Create output directory if it doesn't exist
-    output_dir = '../../outputs/heatmaps'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
-    # Generate heatmaps for each winter season
-    for season, season_data in data.items():
-        # Extract daily average temperatures
-        temps = season_data['temps']['avg']['avg']
+    # Loop through the rows and generate a single-row heatmap for each one
+    for index, row in df.iterrows():
+        obs_date = row['obs_date']
+        temp_avg = row['temp_avg']
 
-        # Create a DataFrame for the heatmap
-        dates = pd.date_range(start=f'{season[:4]}-09-01', end=f'{int(season[:4])+1}-06-30')
-        df = pd.DataFrame({'Date': dates, 'Temperature': temps})
-        df['Month'] = df['Date'].dt.month
-        df['Day'] = df['Date'].dt.day
+        print (obs_date, temp_avg)
 
-        # Pivot the DataFrame to create a matrix for the heatmap
-        heatmap_data = df.pivot('Day', 'Month', 'Temperature')
-
-        # Create the heatmap
-        plt.figure(figsize=(12, 8))
-        sns.heatmap(heatmap_data, cmap='coolwarm', cbar_kws={'label': 'Temperature (°C)'})
-        plt.title(f'Winter Season {season} Daily Average Temperatures')
-        plt.xlabel('Month')
-        plt.ylabel('Day')
-        plt.xticks(ticks=range(1, 11), labels=['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'])
-        plt.yticks(rotation=0)
-
-        # Save the heatmap as a PNG file
-        plt.savefig(os.path.join(output_dir, f'{season}.png'))
-        plt.close()
 
 def generate_html():
     # Create output directory if it doesn't exist
-    output_dir = '../../outputs/heatmaps'
+    output_dir = output_path
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
