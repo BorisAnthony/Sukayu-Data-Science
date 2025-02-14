@@ -95,40 +95,40 @@ def df_get_timespan_data(
     
     Parameters:
     -----------
-    df : pandas.DataFrame
-        Input dataframe containing date data
-    date_column : str
-        Name of the column containing datetime data
-    start_month : int, default 9
-        Starting month (1-12). Default is 9 (September)
-    end_month : int, default 5
-        Ending month (1-12). Default is 5 (May)
-        If end_month < start_month, assumes crossing into next year
-        (e.g., Sept 2023 to May 2024)
-    year : int, optional
-        Starting year for the period. If None, filters by month numbers only.
-        For academic years, this is typically the earlier year
-        (e.g., 2023 for 2023-2024 academic year)
-    custom_start_day : int, default 1
-        Day of the month to start from
-    find_last : bool, default False
-        If True, sorts results in descending order
+        df : pandas.DataFrame
+            Input dataframe containing date data
+        date_column : str
+            Name of the column containing datetime data
+        start_month : int, default 9
+            Starting month (1-12). Default is 9 (September)
+        end_month : int, default 5
+            Ending month (1-12). Default is 5 (May)
+            If end_month < start_month, assumes crossing into next year
+            (e.g., Sept 2023 to May 2024)
+        year : int, optional
+            Starting year for the period. If None, filters by month numbers only.
+            For academic years, this is typically the earlier year
+            (e.g., 2023 for 2023-2024 academic year)
+        custom_start_day : int, default 1
+            Day of the month to start from
+        find_last : bool, default False
+            If True, sorts results in descending order
         
     Returns:
     --------
-    pandas.DataFrame
-        Filtered dataframe sorted by date_column
+        pandas.DataFrame
+            Filtered dataframe sorted by date_column
         
     Examples:
     --------
-    # Get data for 2023-2024 academic year (Sept 2023 to May 2024)
-    df_2023_24 = get_timespan_data(df, 'date', year=2023)  # uses default Sept-May
-    
-    # Get data for 2023-2024 custom period (Oct 2023 to Apr 2024)
-    df_custom = get_timespan_data(df, 'date', start_month=10, end_month=4, year=2023)
-    
-    # Get all Oct-Apr periods across multiple years
-    df_all_periods = get_timespan_data(df, 'date', start_month=10, end_month=4)  # year=None
+        # Get data for 2023-2024 academic year (Sept 2023 to May 2024)
+        df_2023_24 = get_timespan_data(df, 'date', year=2023)  # uses default Sept-May
+        
+        # Get data for 2023-2024 custom period (Oct 2023 to Apr 2024)
+        df_custom = get_timespan_data(df, 'date', start_month=10, end_month=4, year=2023)
+        
+        # Get all Oct-Apr periods across multiple years
+        df_all_periods = get_timespan_data(df, 'date', start_month=10, end_month=4)  # year=None
     """
     if year is None:
         # Filter by month numbers only, handling wrap-around case
@@ -155,7 +155,20 @@ def df_get_timespan_data(
     return timespan_data
 
 
-
+# def get_timespan_data(df, year, date_column, find_last=False, custom_start_month=1, custom_start_day=1):
+#     """
+#     Extract timespan data for a given year and date range.
+#     """
+#     next_year = year + 1
+#     later_first = pd.Timestamp(f'{next_year}-07-01', tz=jst)
+    
+#     if custom_start_month == 1 and custom_start_day == 1:
+#         earlier_first = pd.Timestamp(f'{next_year}-01-01', tz=jst)
+#     else:
+#         earlier_first = pd.Timestamp(f'{year}-{custom_start_month:02d}-{custom_start_day:02d}', tz=jst)
+    
+#     timespan_data = df[(df[date_column] >= earlier_first) & (df[date_column] <= later_first)]
+#     return timespan_data.sort_values(by=date_column, ascending=not find_last)
 
 
 def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mean, threshold, comparison, add_days=0):
