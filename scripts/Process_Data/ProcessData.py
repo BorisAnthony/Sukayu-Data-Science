@@ -201,7 +201,7 @@ def process_data():
             by scanning the first half of the season, forwards."""
         scandi_start_of_autumn_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
-            dayspan=7, 
+            dayspan=14, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
@@ -213,7 +213,7 @@ def process_data():
             by scanning the first half of the season, forwards."""
         scandi_start_of_winter_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
-            dayspan=7, 
+            dayspan=14, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
@@ -225,7 +225,7 @@ def process_data():
             by scanning the second half of the season, forwards."""
         scandi_start_of_spring_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
-            dayspan=7, 
+            dayspan=14, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
@@ -237,7 +237,7 @@ def process_data():
             by scanning the second half of the season, forwards."""
         scandi_start_of_summer_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
-            dayspan=7, 
+            dayspan=14, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
@@ -254,7 +254,7 @@ def process_data():
             search_column='snowdepth', 
             all_or_mean='any', 
             threshold=0.0, 
-            comparison='gt'
+            comparison='gt' # this is not right, it returns the day before it goes to 0.0. using 'ne' martches NULL though.
             )
 
         # SNOWDEPTHS

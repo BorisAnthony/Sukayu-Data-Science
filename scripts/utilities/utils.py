@@ -152,6 +152,7 @@ def df_get_timespan_data(
     
     timespan_data = df[mask].copy()
     # return timespan_data.sort_values(by=date_column, ascending=not find_last)
+    
     return timespan_data
 
 
@@ -197,6 +198,10 @@ def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mea
             condition_met = all(op(value, threshold) for value in to_compare_data)
         elif all_or_mean == "mean":
             condition_met = op(to_compare_data.mean(), threshold)
+            # If mean condition is met, adjust return date to middle of span
+            if condition_met:
+                middle_offset = (dayspan - 1) // 2  # Integer division for odd spans
+                to_return_data = df_timespan_data[date_column].iloc[i + middle_offset]
         else:  # "any" or single value case
             condition_met = op(to_compare_data.iloc[0], threshold)
         
