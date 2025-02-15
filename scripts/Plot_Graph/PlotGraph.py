@@ -1,68 +1,34 @@
 import os
+import sys
 import json
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib import transforms
-from matplotlib import patheffects
-import matplotlib.colors as mcolors
 from datetime import datetime, timedelta
-import numpy as np
-from matplotlib.font_manager import FontProperties
 import subprocess
+# import pandas as pd
+# import seaborn as sns
+# from matplotlib import patheffects
+# import matplotlib.colors as mcolors
+# import numpy as np
+# from matplotlib.font_manager import FontProperties
 
-# Language settings
-TRANSLATIONS = {
-    'en': {
-        'seasons': {
-            'aut': 'Autumn',
-            'win': 'Winter',
-            'spr': 'Spring',
-            'sum': 'Summer'
-        },
-        'metadata': {
-            'total_snowfall': 'Total snowfall',
-            'max_snow_depth': 'Max snow depth',
-            'cm': 'cm'
-        },
-        'markers': {
-            'fst': '1st snowfall',
-            'fst_subs': '1st snowfall\n3 days > 5 cm/day',
-            'lst_subs': 'last snowfall\n3 days > 5cm/day',
-            'lst': 'last snowfall',
-            'fin': 'Snow depth 0'
-        },
-        'date_formats': {
-            'm_d': '%b %d',  # Jan 01
-            'm': '%b'         # Jan
-        }
-    },
-    'ja': {
-        'seasons': {
-            'aut': '秋',
-            'win': '冬',
-            'spr': '春',
-            'sum': '夏'
-        },
-        'metadata': {
-            'total_snowfall': '総降雪量　',
-            'max_snow_depth': '最大積雪深',
-            'cm': 'cm'
-        },
-        'markers': {
-            'fst': '初雪',
-            'fst_subs': '初雪\n3日>5cm/日',
-            'lst_subs': '終雪\n3日>5cm/日',
-            'lst': '終雪',
-            'fin': '積雪0'
-        },
-        'date_formats': {
-            'm_d': '%m月%d日',  # 01月01日
-            'm': '%m月'         # 01月
-        }
-    }
-}
+# Add the necessary directories to the system path
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.extend([
+    script_dir,
+    os.path.join(script_dir, '../utilities')
+])
+from utils import (
+    db_connect,
+    db_query,
+    df_convert_to_datetime,
+    df_get_timespan_data,
+    df_find_in,
+    jst
+)
+from i10n import TRANSLATIONS # Import the language settings/strings
+
 
 # Language selection function
 def set_language(lang='en'):
@@ -99,7 +65,8 @@ def load_winter_data(json_file, winter_year):
         '500cm': [(dates_500, last_500)]
     }
     
-    seasons = winter_data['scandi_season_starts']['avg_based']
+    # seasons = winter_data['scandi_season_starts']['strict']
+    seasons = winter_data['scandi_season_starts']['avg_based'] # smoother…
     
     return {
         'depths': depths,
@@ -296,16 +263,23 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     # Add summer label - only if we have a summer start date
     summer_dates = [d for d in season_dates if d[0] == 'sum']
     if summer_dates:
+        
         summer_start = summer_dates[0][1]
         summer_label = summer_start + timedelta(days=2)
         summer_date = summer_start.strftime(date_formats['m_d'])
-        ax.text(summer_label, -26, f"{summer_date}",
+
+        ax.text(summer_label, -17, f"{season_names['sum']}",
+                horizontalalignment='left', verticalalignment='center',
+                color='#333333', zorder=12, size='small')
+
+        ax.text(summer_label, -36, f"{summer_date}",
                 horizontalalignment='left', verticalalignment='center',
                 color='#333333', zorder=12, weight='bold')
 
-        ax.text(summer_label + timedelta(days=16), -26, f"{season_names['sum']}",
-                horizontalalignment='left', verticalalignment='center',
-                color='#333333', zorder=12)
+        # ax.text(summer_label + timedelta(days=16), -26, f"{season_names['sum']}",
+        #         horizontalalignment='left', verticalalignment='center',
+        #         color='#333333', zorder=12)
+
     
     # Then overlay other seasons where we have dates
     if len(season_dates) >= 2:  # Need at least 2 dates to draw blocks
@@ -322,13 +296,17 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
                 season_text = season_names[season]
                 date_text = start.strftime(date_formats['m_d'])
 
-                ax.text(label_x, -26, f"{date_text}",
+                ax.text(label_x, -17, f"{season_text}",
+                        horizontalalignment='left', verticalalignment='center',
+                        color='#333333', zorder=12, size='small')
+
+                ax.text(label_x, -36, f"{date_text}",
                         horizontalalignment='left', verticalalignment='center',
                         color='#333333', zorder=12, weight='bold')
 
-                ax.text(label_x  + timedelta(days=16), -26, f"{season_text}",
-                        horizontalalignment='left', verticalalignment='center',
-                        color='#333333', zorder=12)
+                # ax.text(label_x  + timedelta(days=16), -26, f"{season_text}",
+                #         horizontalalignment='left', verticalalignment='center',
+                #         color='#333333', zorder=12)
 
     # draw the top border for the summer block
     ax.plot([full_start, full_end], [0, 0], color='black', linewidth=0.5, zorder=100)
@@ -338,64 +316,65 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     # Draw snowfall date markers
     snowfalls = data['snowfalls']
     markers_y_top = -52     # Start at same height as season blocks
-    markers_y_bot = -136    # Extend 100px down
+    markers_y_bot = -110    # Extend 100px down
+    markers_subs_y_bot = -160    # Extend 100px down
     label_offset = -10      # Additional offset for labels
     label_exp_offset = -20  # Additional offset for expanded labels
     
     if snowfalls['fst'] is not None:
         first_snow = datetime.strptime(snowfalls['fst'], '%Y-%m-%d')
         ax.plot([first_snow, first_snow], [markers_y_top, markers_y_bot], 
-                color='#2778BE', linewidth=2, zorder=300, 
+                color='#2778BE', linewidth=2, zorder=-300, 
                 solid_capstyle='butt')
         ax.text(first_snow, markers_y_bot + label_offset, 
                 first_snow.strftime(date_formats['m_d']),
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='right', verticalalignment='top', zorder=-300,
                 color='#2778BE', weight='bold')
         ax.text(first_snow, markers_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['fst'],
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='right', verticalalignment='top', zorder=-300,
                 color='#2778BE', size='small')
 
     if snowfalls['fst_subs'] is not None:
         first_subs = datetime.strptime(snowfalls['fst_subs'], '%Y-%m-%d')
-        ax.plot([first_subs, first_subs], [markers_y_top, markers_y_bot], 
-                color='#325C81', linewidth=2, zorder=300, 
+        ax.plot([first_subs, first_subs], [markers_y_top, markers_subs_y_bot], 
+                color='#325C81', linewidth=2, zorder=-300, 
                 solid_capstyle='butt')
-        ax.text(first_subs, markers_y_bot + label_offset, 
+        ax.text(first_subs, markers_subs_y_bot + label_offset, 
                 first_subs.strftime(date_formats['m_d']),
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='right', verticalalignment='top', zorder=-300,
                 color='#325C81', weight='bold')
-        ax.text(first_subs, markers_y_bot + label_offset + label_exp_offset, 
+        ax.text(first_subs, markers_subs_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['fst_subs'],
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='right', verticalalignment='top', zorder=-300,
                 color='#325C81', size='small')
 
     if snowfalls['lst_subs'] is not None:
         last_subs = datetime.strptime(snowfalls['lst_subs'], '%Y-%m-%d')
-        ax.plot([last_subs, last_subs], [markers_y_top, markers_y_bot], 
-                color='#325C81', linewidth=2, zorder=300, 
+        ax.plot([last_subs, last_subs], [markers_y_top, markers_subs_y_bot], 
+                color='#325C81', linewidth=2, zorder=-300, 
                 solid_capstyle='butt')
-        ax.text(last_subs, markers_y_bot + label_offset, 
+        ax.text(last_subs, markers_subs_y_bot + label_offset, 
                 last_subs.strftime(date_formats['m_d']),
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='left', verticalalignment='top', zorder=-300,
                 color='#325C81', weight='bold')
-        ax.text(last_subs, markers_y_bot + label_offset + label_exp_offset, 
+        ax.text(last_subs, markers_subs_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['lst_subs'],
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='left', verticalalignment='top', zorder=-300,
                 color='#325C81', size='small')
 
     if snowfalls['lst'] is not None:
         last_snow = datetime.strptime(snowfalls['lst'], '%Y-%m-%d')
         ax.plot([last_snow, last_snow], [markers_y_top, markers_y_bot], 
-                color='#2778BE', linewidth=2, zorder=300, 
+                color='#2778BE', linewidth=2, zorder=-300, 
                 solid_capstyle='butt')
         ax.text(last_snow, markers_y_bot + label_offset, 
                 last_snow.strftime(date_formats['m_d']),
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='left', verticalalignment='top', zorder=-300,
                 color='#2778BE', weight='bold')
         ax.text(last_snow, markers_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['lst'],
-                horizontalalignment='right', verticalalignment='top',
+                horizontalalignment='left', verticalalignment='top', zorder=-300,
                 color='#2778BE', size='small')
 
 
@@ -429,15 +408,18 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     # # this lowercases the labels. comment out to disable
     # ax.set_xticklabels([label.get_text().lower() for label in ax.get_xticklabels()])
 
-    # For the x-axis ticks, replace the current setup with:
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))
+    # Move the bottom spine to under the Seasons
+    ax.spines['bottom'].set_position(('axes', 0.2126))
+    ax.spines['bottom'].set_zorder(1000)  # Move to front
+
+    # For the x-axis ticks
+    ax.xaxis.set_major_formatter(mdates.DateFormatter(date_formats['m']))
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonthday=15))
     # Get the labels and convert to lowercase
     ticks = ax.get_xticks()
     ax.set_xticks(ticks)
     ax.set_xticklabels([ax.xaxis.get_major_formatter().format_data(tick).lower() for tick in ticks])
 
-    
     # xaxis tick labels 
     # centered on the month
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonthday=15))
@@ -445,6 +427,19 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     
     ax.tick_params(axis='x', which='major', length=0, pad=10, labelcolor='#999999', labelsize='small')
     ax.tick_params(axis='x', which='minor', length=10, color='#999999')
+
+    # Add bbox styling to the tick labels
+    for label in ax.get_xticklabels():
+        bbox = dict(
+            facecolor='white',      # or any color you prefer
+            edgecolor='none',       # removes the border
+            alpha=1,              # adjust transparency as needed
+            pad=4                   # adjust padding as needed
+        )
+        label.set(bbox=bbox)           # Using set() method instead
+    
+    # print([tick.get_text() for tick in ax.get_xticklabels()])
+    # ax.xaxis.set_tick_params(which='major', labelbottom=True)
 
     # Draw Jan 1st tick mark
     jan_first = datetime(year + 1, 1, 1)  # January 1st of the winter year
@@ -463,8 +458,6 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
     
-    # Move the bottom spine to under the Seasons
-    ax.spines['bottom'].set_position(('axes', 0.2126))
     
     # Remove y-axis ticks
     ax.yaxis.set_ticks([])
@@ -494,6 +487,9 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
 # data = load_winter_data('../outputs/derived/Sukayu-Winters-Data.json', winter_year)
 # fig = plot_winter_snow_depth(winter_year, data, lang='ja')
 # plt.show()
+
+
+# PROCESS ALL WINTERS ----------------------------------------------------------
 
 # Replace the example usage with batch processing
 def process_all_winters(json_file, output_dir):
