@@ -22,7 +22,7 @@ def db_connect(db_path):
         conn.close()
         return
 
-def db_query_data(conn, query):
+def db_query(query, conn):
     """Query the data from the database."""
     try:
         return pd.read_sql_query(query, conn)
@@ -171,13 +171,26 @@ def df_get_timespan_data(
 #     return timespan_data.sort_values(by=date_column, ascending=not find_last)
 
 
-def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mean, threshold, comparison, add_days=0):
-    """Find the date based on the specified condition."""
-    op = getattr(operator, comparison)
+def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mean, threshold, comparison):
+    """Find the date based on the specified condition.
     
+    Parameters:
+        df_timespan_data: DataFrame sorted by date ascending
+        dayspan: int, number of consecutive days to check
+        date_column: str, name of date column
+        search_column: str, name of column to check values in
+        all_or_mean: str, how to evaluate the span - "all", "mean", or "any"
+        threshold: numeric, value to compare against
+        comparison: str, operator comparison name (e.g. "gt", "lt", "ge")
+        chronological_scan: bool, if True scan from earliest date, if False from latest
+        dayspan_direction: str, "following" or "preceding", direction to check days
+    """
+    op = getattr(operator, comparison)
+        
     for i in range(len(df_timespan_data) - max(0, dayspan - 1)):
-        to_compare_data = df_timespan_data[search_column].iloc[i:i+max(1, dayspan)]
-        to_return_data = df_timespan_data[date_column].iloc[i] + pd.Timedelta(days=add_days)
+
+        to_compare_data = df_timespan_data[search_column].iloc[i:i+max(1, dayspan)]            
+        to_return_data = df_timespan_data[date_column].iloc[i]
         
         condition_met = False
         if all_or_mean == "all":
@@ -191,6 +204,7 @@ def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mea
             return to_return_data.strftime('%Y-%m-%d')
     
     return None  # Return None if no condition is met
+
 
 
 
