@@ -14,7 +14,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 utilities_dir = os.path.join(script_dir, '../utilities')
 sys.path.append(utilities_dir)
 
-from utils import (db_connect, db_query_data)
+from utils import (
+    db_connect, 
+    db_query
+    )
 
 
 # Get the directory of the current script
@@ -39,7 +42,7 @@ def generate_heatmaps():
     FROM 
         obs_sukayu_daily
     """
-    df = db_query_data(conn, query)
+    df = db_query(query, conn)
 
     # Close the database connection
     conn.close()
