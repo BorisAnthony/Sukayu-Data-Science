@@ -3,29 +3,27 @@ import sys
 import shutil
 import sqlite3
 
-# Add the parent directory of utils.py to the system path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Add the utilities directory to the system path
+# Add the necessary directories to the system path
 script_dir = os.path.dirname(os.path.abspath(__file__))
-utilities_dir = os.path.join(script_dir, '../utilities')
-sys.path.append(utilities_dir)
+sys.path.extend([
+    script_dir,
+    os.path.join(script_dir, '../utilities')
+])
 
 from utils import (
     db_connect,
-    db_query_data,
     db_column_exists,
     db_delete_extra_tables,
     db_pragma_integrity_check,
     db_compact_database
-    )
+)
 
 from database_ops import (
     create_new_table,
     copy_data_to_new_table,
     update_rows,
     calculate_and_update_rolling_averages
-    )
+)
 
 
 def expand_database():
