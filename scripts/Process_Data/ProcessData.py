@@ -4,14 +4,16 @@ import pandas as pd
 import json
 import shutil
 
-# Add the utilities directory to the system path
+# Add the necessary directories to the system path
 script_dir = os.path.dirname(os.path.abspath(__file__))
-utilities_dir = os.path.join(script_dir, '../utilities')
-sys.path.append(utilities_dir)
+sys.path.extend([
+    script_dir,
+    os.path.join(script_dir, '../utilities')
+])
 
 from utils import (
     db_connect,
-    db_query_data,
+    db_query,
     df_convert_to_datetime,
     db_delete_extra_tables,
     db_pragma_integrity_check,
@@ -56,6 +58,8 @@ def process_data():
         obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp 
     FROM
         obs_sukayu_daily
+    ORDER BY
+        obs_date ASC
     """
 
 
@@ -68,7 +72,7 @@ def process_data():
     cursor = conn.cursor()
 
     # Query the data
-    df = db_query_data(conn, query)
+    df = db_query(query, conn)
     print("DB   - Data queried")
 
 
@@ -90,13 +94,15 @@ def process_data():
 
         """ Set the timespan data for the season for use in full-season min/max/sum/avg calculations """
         df_full_season = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=10, end_month=7)
-        df_2nd_half_se = df_get_timespan_data(df=df, year=year+1, date_column='obs_date', start_month=1, end_month=7)
+        df_1st_half_se = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=10, end_month=1)
+        df_2nd_half_se = df_get_timespan_data(df=df, year=year+1, date_column='obs_date', start_month=2, end_month=7)
         df_trad_season = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=12, end_month=4)
 
-        """Find the first date where snowfall is not 0.0."""
+        """Find the first date where snowfall is not 0.0.
+            by scanning the first half of the season, forwards."""
         first_snowfall_date = df_find_in(
             # timespan_data=group, 
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=1, 
             date_column='obs_date', 
             search_column='snowfall',
@@ -105,9 +111,10 @@ def process_data():
             comparison='gt'
             )
 
-        """Find the last snowfall date by scanning backwards from June of the following year."""
+        """Find the last date where snowfall is not 0.0.
+            by scanning the second half of the season, backwards."""
         last_snowfall_date  = df_find_in(
-            df_timespan_data=df_2nd_half_se.sort_values(by='obs_date', ascending=False), 
+            df_timespan_data=df_2nd_half_se.iloc[::-1], 
             dayspan=1, 
             date_column='obs_date', 
             search_column='snowfall', 
@@ -116,53 +123,58 @@ def process_data():
             comparison='gt'
             )
 
-        """Find the first date where snowfall is not 0.0 and followed by at least 2 more days with non-zero snowfall."""
+        """Find the first date where snowfall was 5.0 or more, and was followed by at least 2 more days with the same
+            by scanning the first half of the season, forwards."""
         first_snowfall_of_consequence_date = df_find_in(
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=3, 
             date_column='obs_date', 
             search_column='snowfall', 
             all_or_mean='all', 
             threshold=5.0, 
-            comparison='gt'
+            comparison='ge'
             )
 
-        """Find the last date where snowfall is not 0.0 and followed by at least 2 more days with non-zero snowfall."""
+        """Find the last date where snowfall is 5.0 or more, and was preceded by at least 2 more days with the same
+            by scanning the second half of the season, backwards."""
         last_snowfall_of_consequence_date = df_find_in(
-            df_timespan_data=df_2nd_half_se.sort_values(by='obs_date', ascending=False), 
+            df_timespan_data=df_2nd_half_se.iloc[::-1], 
             dayspan=3, 
             date_column='obs_date',
             search_column='snowfall', 
             all_or_mean='all', 
             threshold=5.0, 
-            comparison='gt'
+            comparison='ge'
             )
         # Snowfall total is calculated at the end of this list
         
 
-        """Find the date when temp_avg has been below 10.0 for 7 consecutive days."""
+        """Find the date when temp_avg started being below 10.0 for 7 consecutive days
+            by scanning the first half of the season, forwards."""
         scandi_start_of_autumn_date = df_find_in(
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='all', 
             threshold=10.0, 
-            comparison='lt'
+            comparison='le'
             )
 
-        """Find the date when temp_avg has been below 0.0 for 7 consecutive days."""
+        """Find the date when temp_avg started being below 0.0 for 7 consecutive days
+            by scanning the first half of the season, forwards."""
         scandi_start_of_winter_date = df_find_in(
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='all', 
             threshold=0.0, 
-            comparison='lt'
+            comparison='le'
             )
 
-        """Find the date when temp_avg has been above 0.0 for 7 consecutive days."""
+        """Find the date when temp_avg started being above 0.0 for 7 consecutive days
+            by scanning the second half of the season, forwards."""
         scandi_start_of_spring_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=7, 
@@ -170,10 +182,11 @@ def process_data():
             search_column='temp_avg', 
             all_or_mean='all', 
             threshold=0.0, 
-            comparison='gt'
+            comparison='ge'
             )
 
-        """Find the date when temp_avg has been above 10.0 for 7 consecutive days."""
+        """Find the date when temp_avg started being above 10.0 for 7 consecutive days
+            by scanning the second half of the season, forwards."""
         scandi_start_of_summer_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=7, 
@@ -181,32 +194,35 @@ def process_data():
             search_column='temp_avg', 
             all_or_mean='all', 
             threshold=10.0, 
-            comparison='gt'
+            comparison='ge'
             )
         
-        """Find the date when the average temp_avg has been below 10.0 for 7 consecutive days."""
+        """Find the date when the average temp_avg started being below 10.0 for 7 consecutive days
+            by scanning the first half of the season, forwards."""
         scandi_start_of_autumn_avg_based_date = df_find_in(
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=10.0, 
-            comparison='lt'
+            comparison='le'
             )
 
-        """Find the date when the average temp_avg has been below 0.0 for 7 consecutive days."""
+        """Find the date when the average temp_avg started being below 0.0 for 7 consecutive days
+            by scanning the first half of the season, forwards."""
         scandi_start_of_winter_avg_based_date = df_find_in(
-            df_timespan_data=df_full_season,
+            df_timespan_data=df_1st_half_se,
             dayspan=7, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=0.0, 
-            comparison='lt'
+            comparison='le'
             )
 
-        """Find the date when the average temp_avg has been above 0.0 for 7 consecutive days."""
+        """Find the date when the average temp_avg started being above 0.0 for 7 consecutive days
+            by scanning the second half of the season, forwards."""
         scandi_start_of_spring_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=7, 
@@ -214,10 +230,11 @@ def process_data():
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=0.0, 
-            comparison='gt'
+            comparison='ge'
             )
 
-        """Find the date when the average temp_avg has been above 10.0 for 7 consecutive days."""
+        """Find the date when the average temp_avg started being above 10.0 for 7 consecutive days
+            by scanning the second half of the season, forwards."""
         scandi_start_of_summer_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=7, 
@@ -225,19 +242,19 @@ def process_data():
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=10.0, 
-            comparison='gt'
+            comparison='ge'
             )
         
-        """Find the date when snowdepth is not 0.0 by scanning backwards from end of season of the following year."""
+        """Find the date when snowdepth at the end of the season is not 0.0
+            by scanning the second half of the season, backwards."""
         snow_gone_date = df_find_in(
-            df_timespan_data=df_2nd_half_se.sort_values(by='obs_date', ascending=False), 
+            df_timespan_data=df_2nd_half_se.iloc[::-1],
             dayspan=1, 
             date_column='obs_date', 
             search_column='snowdepth', 
             all_or_mean='any', 
             threshold=0.0, 
-            comparison='gt',
-            add_days=1
+            comparison='gt'
             )
 
         # SNOWDEPTHS
@@ -261,7 +278,7 @@ def process_data():
         snowdepth_date_last = {}
         for depth in depths_backwards:
             snowdepth_date_last[depth] = df_find_in(
-                df_timespan_data=df_full_season.sort_values(by='obs_date', ascending=False), 
+                df_timespan_data=df_full_season.iloc[::-1], 
                 dayspan=1, 
                 date_column='obs_date', 
                 search_column='snowdepth', 
@@ -404,7 +421,7 @@ def process_data():
     # Dump a CSV export of the whole dataset
     # Query the data
     dump_query = "SELECT * FROM obs_sukayu_daily"
-    df_dump = db_query_data(conn, dump_query)
+    df_dump = db_query(dump_query, conn)
     if df_dump.empty:
         conn.close()
         return
