@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 import json
 import shutil
+from datetime import datetime, timedelta
 
 # Add the necessary directories to the system path
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,9 +25,13 @@ from utils import (
     df_write_to_sqlite,
     write_and_zip_csv,
     calculate_stats,
-    jst
+    jst,
+    get_this_winter_season_info
 )
 
+
+# Get the start and end dates of THIS season
+this_season = get_this_winter_season_info()
 
 def process_data():
 
@@ -92,11 +97,10 @@ def process_data():
 
         year = int(year)
 
-        """ Set the timespan data for the season for use in full-season min/max/sum/avg calculations """
-        df_full_season = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=10, end_month=7)
-        df_1st_half_se = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=10, end_month=1)
-        df_2nd_half_se = df_get_timespan_data(df=df, year=year+1, date_column='obs_date', start_month=2, end_month=7)
-        df_trad_season = df_get_timespan_data(df=df, year=year, date_column='obs_date', start_month=12, end_month=4)
+        """ Set the timespan data for the season sections to get scandi start dates, snowfall dates, and snowdepth threshold dates """
+        df_full_season = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=10, end_month=7)
+        df_1st_half_se = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=10, end_month=1)
+        df_2nd_half_se = df_get_timespan_data(df=df, date_column='obs_date', year=year+1, start_month=2, end_month=7)
 
         """Find the first date where snowfall is not 0.0.
             by scanning the first half of the season, forwards."""
@@ -148,114 +152,117 @@ def process_data():
             )
         # Snowfall total is calculated at the end of this list
         
-
-        """Find the date when temp_avg started being below 10.0 for 7 consecutive days
-            by scanning the first half of the season, forwards."""
-        scandi_start_of_autumn_date = df_find_in(
-            df_timespan_data=df_1st_half_se,
-            dayspan=7, 
-            date_column='obs_date', 
-            search_column='temp_avg', 
-            all_or_mean='all', 
-            threshold=10.0, 
-            comparison='le'
-            )
-
-        """Find the date when temp_avg started being below 0.0 for 7 consecutive days
-            by scanning the first half of the season, forwards."""
-        scandi_start_of_winter_date = df_find_in(
-            df_timespan_data=df_1st_half_se,
-            dayspan=7, 
-            date_column='obs_date', 
-            search_column='temp_avg', 
-            all_or_mean='all', 
-            threshold=0.0, 
-            comparison='le'
-            )
-
-        """Find the date when temp_avg started being above 0.0 for 7 consecutive days
-            by scanning the second half of the season, forwards."""
-        scandi_start_of_spring_date = df_find_in(
-            df_timespan_data=df_2nd_half_se, 
-            dayspan=7, 
-            date_column='obs_date', 
-            search_column='temp_avg', 
-            all_or_mean='all', 
-            threshold=0.0, 
-            comparison='ge'
-            )
-
-        """Find the date when temp_avg started being above 10.0 for 7 consecutive days
-            by scanning the second half of the season, forwards."""
-        scandi_start_of_summer_date = df_find_in(
-            df_timespan_data=df_2nd_half_se, 
-            dayspan=7, 
-            date_column='obs_date', 
-            search_column='temp_avg', 
-            all_or_mean='all', 
-            threshold=10.0, 
-            comparison='ge'
-            )
+        # SCANDI SEASON DATES
         
-        """Find the date when the average temp_avg started being below 10.0 for 7 consecutive days
+        scandi_strct_dayspan = 7
+        scandi_avg_dayspan = 14
+        scandi_warm_threshold = 10.0
+        scandi_cold_threshold = 0.0
+        
+        # ! The Strict Scandi Date is a bit rough. It's just the first date where the average temp is below/above 0.0/10.0 for 7 days.
+        # ! The Average-Based Scandi Date is a bit more refined. It's the first date where the average temp is below/above 0.0/10.0 for 14 days.
+
+        # """Find the date when temp_avg started being below 10.0 for {scandi_strct_dayspan} consecutive days
+        #     by scanning the first half of the season, forwards."""
+        # scandi_start_of_autumn_date = df_find_in(
+        #     df_timespan_data=df_1st_half_se,
+        #     dayspan=scandi_strct_dayspan, 
+        #     date_column='obs_date', 
+        #     search_column='temp_avg', 
+        #     all_or_mean='all', 
+        #     threshold=scandi_warm_threshold, 
+        #     comparison='le'
+        #     )
+
+        # """Find the date when temp_avg started being below 0.0 for {scandi_strct_dayspan} consecutive days
+        #     by scanning the first half of the season, forwards."""
+        # scandi_start_of_winter_date = df_find_in(
+        #     df_timespan_data=df_1st_half_se,
+        #     dayspan=scandi_strct_dayspan, 
+        #     date_column='obs_date', 
+        #     search_column='temp_avg', 
+        #     all_or_mean='all', 
+        #     threshold=scandi_cold_threshold, 
+        #     comparison='le'
+        #     )
+
+        # """Find the date when temp_avg started being above 0.0 for {scandi_strct_dayspan} consecutive days
+        #     by scanning the second half of the season, forwards."""
+        # scandi_start_of_spring_date = df_find_in(
+        #     df_timespan_data=df_2nd_half_se, 
+        #     dayspan=scandi_strct_dayspan, 
+        #     date_column='obs_date', 
+        #     search_column='temp_avg', 
+        #     all_or_mean='all', 
+        #     threshold=scandi_cold_threshold, 
+        #     comparison='ge'
+        #     )
+
+        # """Find the date when temp_avg started being above 10.0 for {scandi_strct_dayspan} consecutive days
+        #     by scanning the second half of the season, forwards."""
+        # scandi_start_of_summer_date = df_find_in(
+        #     df_timespan_data=df_2nd_half_se, 
+        #     dayspan=scandi_strct_dayspan, 
+        #     date_column='obs_date', 
+        #     search_column='temp_avg', 
+        #     all_or_mean='all', 
+        #     threshold=scandi_warm_threshold, 
+        #     comparison='ge'
+        #     )
+        
+
+        """Find the date when the average temp_avg started being below {scandi_warm_threshold} for {scandi_avg_dayspan} consecutive days
             by scanning the first half of the season, forwards."""
         scandi_start_of_autumn_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
-            dayspan=14, 
+            dayspan=scandi_avg_dayspan, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
-            threshold=10.0, 
-            comparison='le'
+            threshold=scandi_warm_threshold, 
+            comparison='le',
+            offset=scandi_avg_dayspan/2 # offset forward by half the dayspan to get the middle date of the averaged result  
             )
 
-        """Find the date when the average temp_avg started being below 0.0 for 7 consecutive days
+        """Find the date when the average temp_avg started being below {scandi_cold_threshold} for {scandi_avg_dayspan} consecutive days
             by scanning the first half of the season, forwards."""
         scandi_start_of_winter_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
-            dayspan=14, 
+            dayspan=scandi_avg_dayspan, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
-            threshold=0.0, 
-            comparison='le'
+            threshold=scandi_cold_threshold, 
+            comparison='le',
+            offset=scandi_avg_dayspan/2 # offset forward by half the dayspan to get the middle date of the averaged result
             )
 
-        """Find the date when the average temp_avg started being above 0.0 for 7 consecutive days
+        """Find the date when the average temp_avg started being above {scandi_cold_threshold} for {scandi_avg_dayspan} consecutive days
             by scanning the second half of the season, forwards."""
         scandi_start_of_spring_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
-            dayspan=14, 
+            dayspan=scandi_avg_dayspan, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
-            threshold=0.0, 
-            comparison='ge'
+            threshold=scandi_cold_threshold, 
+            comparison='ge',
+            offset=scandi_avg_dayspan/2 # offset forward by half the dayspan to get the middle date of the averaged result
             )
 
-        """Find the date when the average temp_avg started being above 10.0 for 7 consecutive days
+        """Find the date when the average temp_avg started being above {scandi_warm_threshold} for {scandi_avg_dayspan} consecutive days
             by scanning the second half of the season, forwards."""
         scandi_start_of_summer_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
-            dayspan=14, 
+            dayspan=scandi_avg_dayspan, 
             date_column='obs_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
-            threshold=10.0, 
-            comparison='ge'
+            threshold=scandi_warm_threshold, 
+            comparison='ge',
+            offset=scandi_avg_dayspan/2 # offset forward by half the dayspan to get the middle date of the averaged result
             )
-        
-        """Find the date when snowdepth at the end of the season is not 0.0
-            by scanning the second half of the season, backwards."""
-        snow_gone_date = df_find_in(
-            df_timespan_data=df_2nd_half_se.iloc[::-1],
-            dayspan=1, 
-            date_column='obs_date', 
-            search_column='snowdepth', 
-            all_or_mean='any', 
-            threshold=0.0, 
-            comparison='gt' # this is not right, it returns the day before it goes to 0.0. using 'ne' martches NULL though.
-            )
+
 
         # SNOWDEPTHS
 
@@ -286,6 +293,20 @@ def process_data():
                 threshold=depth,
                 comparison='ge'
             )
+        
+
+        """Find the date when snowdepth at the end of the season is not 0.0
+            by scanning the second half of the season, backwards."""
+        snow_gone_date = df_find_in(
+            df_timespan_data=df_2nd_half_se.iloc[::-1],
+            dayspan=1, 
+            date_column='obs_date', 
+            search_column='snowdepth', 
+            all_or_mean='any', 
+            threshold=0.0, 
+            comparison='gt', # this is not right, it returns the day before it goes to 0.0. using 'ne' martches NULL though…
+            offset=1 # … so we add a day here to get the correct date.
+            )
 
 
 
@@ -310,6 +331,10 @@ def process_data():
         # ! This is doing stats on the "traditional winter season" timespan…
         # ! November through April
         # ! Maybe not right?
+
+        """ Set the timespan data for the season for use in full-season min/max/sum/avg calculations """
+        df_trad_season = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=12, end_month=4)
+
         stats = calculate_stats(df_trad_season, columns)
 
         next_year_abb = str(int(year) + 1)[-2:]
@@ -319,17 +344,17 @@ def process_data():
         # Store the dates in the dictionary
         seasons_data[season_label] = {
             'scandi_season_starts': {
-                'strict' : {
-                    'aut': scandi_start_of_autumn_date,
-                    'win': scandi_start_of_winter_date,
-                    'spr': scandi_start_of_spring_date,
-                    'sum': scandi_start_of_summer_date
-                },
+                # 'strict' : {
+                #     'aut': scandi_start_of_autumn_date,
+                #     'win': scandi_start_of_winter_date,
+                #     'spr': scandi_start_of_spring_date,
+                #     'sum': scandi_start_of_summer_date
+                # },
                 'avg_based': {
                     'aut': scandi_start_of_autumn_avg_based_date,
                     'win': scandi_start_of_winter_avg_based_date,
-                    'spr': scandi_start_of_spring_avg_based_date,
-                    'sum': scandi_start_of_summer_avg_based_date
+                    'spr': scandi_start_of_spring_avg_based_date or this_season['spring_start'],
+                    'sum': scandi_start_of_summer_avg_based_date or this_season['summer_start']
                 }
             },
             'snowdepths': {

@@ -4,6 +4,7 @@ import sqlite3
 import operator
 import pytz
 import zipfile
+from datetime import datetime
 
 from typing import Dict, Union, List
 
@@ -172,7 +173,7 @@ def df_get_timespan_data(
 #     return timespan_data.sort_values(by=date_column, ascending=not find_last)
 
 
-def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mean, threshold, comparison):
+def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mean, threshold, comparison, offset=0):
     """Find the date based on the specified condition.
     
     Parameters:
@@ -206,6 +207,7 @@ def df_find_in(df_timespan_data, dayspan, date_column, search_column, all_or_mea
             condition_met = op(to_compare_data.iloc[0], threshold)
         
         if condition_met:
+            to_return_data = to_return_data + pd.DateOffset(days=offset)
             return to_return_data.strftime('%Y-%m-%d')
     
     return None  # Return None if no condition is met
@@ -312,3 +314,57 @@ def calculate_stats(df: pd.DataFrame, columns: List[str], round_digits: int = 1)
         }
     
     return stats
+
+
+
+def get_this_winter_season_info():
+    # Get current date
+    current_date = datetime.now()
+    current_year = current_date.year
+    current_month = current_date.month
+    
+    # Determine winter season years
+    if 1 <= current_month <= 6:
+        # First half of the year: winter season is previous year to current year
+        start_year = current_year - 1
+        end_year = current_year
+    else:
+        # Second half of the year: winter season is current year to next year
+        start_year = current_year
+        end_year = current_year + 1
+    
+    # Format the season string (YYYY-YY)
+    season_string = f"{start_year}-{str(end_year)[2:]}"
+    
+    # Determine meteorological start dates for Spring and Summer
+    spring_start = f"{end_year}-03-01"
+    summer_start = f"{end_year}-06-01"
+    
+    # Return all requested information in a dictionary with named keys
+    return {
+        "winter_label": season_string,
+        "winter_start_year": start_year,
+        "winter_end_year": end_year,
+        "spring_start": spring_start,
+        "summer_start": summer_start
+    }
+
+def is_after_may_17(date):
+    """
+    Check if the given date is after May 17th (ignoring the year).
+    
+    Args:
+        date: A datetime object to check.
+        
+    Returns:
+        bool: True if the date is after May 17th, False otherwise.
+    """
+    # Extract month and day from the input date
+    month = date.month
+    day = date.day
+    
+    # Check if the date is after May 17th
+    if month > 5 or (month == 5 and day > 17):
+        return True
+    else:
+        return False

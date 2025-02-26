@@ -25,10 +25,14 @@ from utils import (
     df_convert_to_datetime,
     df_get_timespan_data,
     df_find_in,
-    jst
+    jst,
+    is_after_may_17
 )
 from i10n import TRANSLATIONS # Import the language settings/strings
 
+RANGE_START = 100
+RANGE_END = 600
+RANGE_STEP = 50
 
 # Language selection function
 def set_language(lang='en'):
@@ -45,26 +49,12 @@ def load_winter_data(json_file, winter_year):
     winter_data = data[winter_year]
     depths = winter_data['snowdepths']
     
-    dates_100 = depths['first']['100']
-    dates_200 = depths['first']['200']
-    dates_300 = depths['first']['300']
-    dates_400 = depths['first']['400']
-    dates_500 = depths['first']['500']
-    
-    last_100 = depths['last']['100']
-    last_200 = depths['last']['200']
-    last_300 = depths['last']['300']
-    last_400 = depths['last']['400']
-    last_500 = depths['last']['500']
-    
-    milestones = {
-        '100cm': [(dates_100, last_100)],
-        '200cm': [(dates_200, last_200)],
-        '300cm': [(dates_300, last_300)],
-        '400cm': [(dates_400, last_400)],
-        '500cm': [(dates_500, last_500)]
-    }
-    
+    milestones = {}
+    for depth in range(RANGE_START, RANGE_END, RANGE_STEP):
+        first_date = depths['first'][str(depth)]
+        last_date = depths['last'][str(depth)]
+        milestones[f'{depth}cm'] = [(first_date, last_date)] 
+ 
     # seasons = winter_data['scandi_season_starts']['strict']
     seasons = winter_data['scandi_season_starts']['avg_based'] # smoother…
     
@@ -102,12 +92,13 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
 
     # Fixed dimensions for all graphs
     FIXED_WIDTH_PX = 1525  # 305 days * 5px per day
-    FIXED_HEIGHT_PX = 800  # 500px for snow + 100px for seasons/labels
+    FIXED_HEIGHT_PX = (RANGE_END + 300) # 600px for snow + 300px for seasons/labels
     DPI = 100
     
     # Convert to inches for matplotlib
     width_in = FIXED_WIDTH_PX / DPI
     height_in = FIXED_HEIGHT_PX / DPI
+    
     
     # Create figure with exact size
     fig = plt.figure(figsize=(width_in, height_in), dpi=DPI)
@@ -121,7 +112,7 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     
     # Set axis limits
     ax.set_xlim(start_date, end_date)
-    ax.set_ylim(-200, 500)  # -100 to accommodate season blocks and labels
+    ax.set_ylim(-300, RANGE_END)  # -200 to accommodate season blocks and labels
     
     # Set up grid
     ax.grid(True, linestyle=':', alpha=0.2)
@@ -136,8 +127,10 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     print(f"Actual number of days: {(end_date - start_date).days}")
 
     # Draw snow depth blocks
-    depths = [500, 400, 300, 200, 100]  # Order matters for stacking
-    colors = ['#e6e6e6'] * 5
+    # depths = [500, 400, 300, 200, 100]  # Order matters for stacking
+    depths = list(range(RANGE_END - RANGE_STEP, RANGE_START - RANGE_STEP, -RANGE_STEP))  # Generate depths in reverse order
+    print(f"Depths: {depths}")
+    colors = ['#e6e6e6'] * 10
     
     # First find the reference point for label alignment
     label_x = None
@@ -193,38 +186,39 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
             ax.text(end_date + timedelta(days=2), depth + 5, end_label,
                    horizontalalignment='left', verticalalignment='bottom',
                    color='#999999', size='small', zorder=base_zorder + 3)
-                   
-            # Label using the reference point
-            # Draw small line above label (except for first actual block)
-            if block_count > 0:  # If not the first block we've drawn
-                # Line should be same color/width as borders
-                # Position it 10px above the text which is at depth-10
-                line_y = depth + 1  # text is at depth-10, so line goes 10px above that
-                
-                # Draw a short line (e.g., 10px wide centered on the label position)
-                line_start = label_x - timedelta(days=7)  # Adjust days to control line width
-                line_end = label_x + timedelta(days=7)
-                
-                ax.plot([line_start, line_end], [line_y, line_y], 
-                       color='#999999', linewidth=1, zorder=1000)  # Just below label zorder
-            
-                # Draw label with background
-                ax.text(label_x, depth-10, f'{depth}cm',
-                       horizontalalignment='center', verticalalignment='top',
-                       color='#999999',
-                       bbox=dict(
-                        facecolor='#e6e6e6', 
-                        edgecolor='none', 
-                        pad=6
-                        ),
-                       zorder=990)
 
-            else:
-                # First block label without background
-                ax.text(label_x, depth-10, f'{depth}cm',
-                       horizontalalignment='center', verticalalignment='top',
-                       color='#999999',
-                       zorder=1000)
+            # # DEPRECATED (for now): Label using the reference point       
+            # # Label using the reference point
+            # # Draw small line above label (except for first actual block)
+            # if block_count > 0:  # If not the first block we've drawn
+            #     # Line should be same color/width as borders
+            #     # Position it 10px above the text which is at depth-10
+            #     line_y = depth + 1  # text is at depth-10, so line goes 10px above that
+                
+            #     # Draw a short line (e.g., 10px wide centered on the label position)
+            #     line_start = label_x - timedelta(days=7)  # Adjust days to control line width
+            #     line_end = label_x + timedelta(days=7)
+                
+            #     ax.plot([line_start, line_end], [line_y, line_y], 
+            #            color='#999999', linewidth=1, zorder=1000)  # Just below label zorder
+            
+            #     # Draw label with background
+            #     ax.text(label_x, depth-10, f'{depth}cm',
+            #            horizontalalignment='center', verticalalignment='top',
+            #            color='#999999',
+            #            bbox=dict(
+            #             facecolor='#e6e6e6', 
+            #             edgecolor='none', 
+            #             pad=6
+            #             ),
+            #            zorder=990)
+
+            # else:
+            #     # First block label without background
+            #     ax.text(label_x, depth-10, f'{depth}cm',
+            #            horizontalalignment='center', verticalalignment='top',
+            #            color='#999999',
+            #            zorder=1000)
             
             block_count += 1  # Increment counter only for blocks that get drawn
 
@@ -236,12 +230,6 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
         'spr': '#AEC99C',  # Light green for spring
         'sum': '#F5DFA3'   # Dusty Yellow for summer
     }
-    # season_names = {
-    #     'aut': 'Autumn',
-    #     'win': 'Winter',
-    #     'spr': 'Spring',
-    #     'sum': 'Summer'
-    # }
     
     # Convert dates and create season blocks
     season_dates = []
@@ -356,11 +344,15 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
                 solid_capstyle='butt')
         ax.text(last_subs, markers_subs_y_bot + label_offset, 
                 last_subs.strftime(date_formats['m_d']),
-                horizontalalignment='left', verticalalignment='top', zorder=-300,
+                # horizontalalignment='left',
+                horizontalalignment='right' if is_after_may_17(last_subs) else 'left',
+                verticalalignment='top', zorder=-300,
                 color='#325C81', weight='bold')
         ax.text(last_subs, markers_subs_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['lst_subs'],
-                horizontalalignment='left', verticalalignment='top', zorder=-300,
+                # horizontalalignment='left', 
+                horizontalalignment='right' if is_after_may_17(last_subs) else 'left',
+                verticalalignment='top', zorder=-300,
                 color='#325C81', size='small')
 
     if snowfalls['lst'] is not None:
@@ -409,7 +401,7 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     # ax.set_xticklabels([label.get_text().lower() for label in ax.get_xticklabels()])
 
     # Move the bottom spine to under the Seasons
-    ax.spines['bottom'].set_position(('axes', 0.2126))
+    ax.spines['bottom'].set_position(('axes', 0.275))
     ax.spines['bottom'].set_zorder(1000)  # Move to front
 
     # For the x-axis ticks
@@ -419,6 +411,7 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
     ticks = ax.get_xticks()
     ax.set_xticks(ticks)
     ax.set_xticklabels([ax.xaxis.get_major_formatter().format_data(tick).lower() for tick in ticks])
+    ax.xaxis.grid(False)
 
     # xaxis tick labels 
     # centered on the month
@@ -453,14 +446,27 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
 
 
     # Other Axis Options -------------------------------------------------------
-    # Remove the top and right spines
+    # Remove the top and left spines
     ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
     
-    
+    # Set Y Axis Ticket, on right side
+    # Move y-axis ticks and labels to the right side
+    ax.yaxis.tick_right()
+    ax.yaxis.set_label_position("left")
+    ax.tick_params(axis='y', colors='#cccccc')
+    ax.yaxis.label.set_color('#cccccc')
+    # Set Y axis spine and ticks to end at 0
+    ax.spines['right'].set_bounds(0, RANGE_END)
+    ax.spines['right'].set_visible(True)
+    ax.spines['right'].set_color('#cccccc')
+    ax.yaxis.set_ticks_position('right')
+    ax.yaxis.set_ticks(range(0, RANGE_END + 1, RANGE_STEP * 2))
+    # Set Y axis grid lines color
+    # ax.yaxis.grid(True, color='#cccccc', linestyle=':', linewidth=0.5)
+    ax.yaxis.grid(True, color='#333333', zorder=-100)
     # Remove y-axis ticks
-    ax.yaxis.set_ticks([])
+    # ax.yaxis.set_ticks([])
     
 
 
@@ -505,7 +511,8 @@ def process_all_winters(json_file, output_dir):
         data = load_winter_data(json_file, winter_year)
         
         # Generate both language versions
-        for lang in ['en', 'ja']:
+        # for lang in ['en', 'ja']:
+        for lang in ['en']:
             # Create the figure
             fig = plot_winter_snow_depth(winter_year, data, lang)
             
@@ -562,5 +569,5 @@ def create_video_from_pngs(input_pattern, output_file, frame_duration=1):
         print(f"Error creating video: {e}")
 
 # Create videos for both languages
-create_video_from_pngs("../outputs/figures/en/*.png", "../outputs/figures/en/winters.mp4")
-create_video_from_pngs("../outputs/figures/ja/*.png", "../outputs/figures/ja/winters.mp4")
+# create_video_from_pngs("../outputs/figures/en/*.png", "../outputs/figures/en/winters.mp4")
+# create_video_from_pngs("../outputs/figures/ja/*.png", "../outputs/figures/ja/winters.mp4")
