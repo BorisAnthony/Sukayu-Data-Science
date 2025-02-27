@@ -1331,7 +1331,7 @@ def plot_snowdepth_snowfall_seasons_temps(winter_year, data, lang='en'):
 
 # ------------------------------------------------------------------------------
 # Process All Winters
-def process_all_winters(output_dir, db_path):
+def process_all_winters(output_dir, db_path, specific_winters=None, viz_types=None):
     """
     Process all winter years from the SQLite database and generate visualizations.
     
@@ -1353,8 +1353,13 @@ def process_all_winters(output_dir, db_path):
         return
     
     # Extract winter years from results
-    winter_years = results['season'].tolist()
+    all_winter_years = results['season'].tolist()
     
+    # Use specific winters if provided, otherwise use all
+    winter_years = specific_winters if specific_winters else all_winter_years
+
+    # Default visualization types if not specified
+    viz_types = viz_types if viz_types else ['full']
 
     for winter_year in winter_years:
 
@@ -1379,7 +1384,7 @@ def process_all_winters(output_dir, db_path):
             print(f"\n{flag} — {lang_full}")
 
             # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            if args.full:
+            if 'full' in viz_types:
                 fig = plot_snowdepth_snowfall_seasons_temps(winter_year, data, lang)
                 
                 # Compose filename
@@ -1396,7 +1401,7 @@ def process_all_winters(output_dir, db_path):
                 print(f"✔︎ Generated snowdepth_snowfall_seasons_temps: {output_file}")
             
             # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            if args.no_temps:
+            if 'no_temps' in viz_types:
                 fig = plot_snowdepth_snowfall_seasons(winter_year, data, lang)
                 
                 # Compose filename
@@ -1413,7 +1418,7 @@ def process_all_winters(output_dir, db_path):
                 print(f"✔︎ Generated snowdepth_snowfall_seasons: {output_file}")
             
             # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            if args.seasons_only:
+            if 'seasons_only' in viz_types:
                 fig_seasons = plot_seasons_only(winter_year, data, lang)
                 
                 # Compose filename
@@ -1486,7 +1491,7 @@ if __name__ == "__main__":
             os.makedirs(f"{output_dir}/{lang}/{viz_type}", exist_ok=True)
     
     # Process the winter data
-    process_all_winters(output_dir, db_path)
+    process_all_winters(output_dir, db_path, args.winters, viz_types)
     
     # Create videos if requested
     if args.video:

@@ -113,7 +113,6 @@ def update_rows(cursor):
             (temp_amp, wind_speed_amp, rowid)
         )
 
-
 def calculate_and_update_rolling_averages(cursor):
     """Calculate and update 7-day centered rolling averages for temp_avg, temp_hgh, and temp_low."""
 

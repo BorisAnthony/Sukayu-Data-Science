@@ -1,17 +1,14 @@
-import os
-import sys
 import pandas as pd
 import json
 import shutil
 from datetime import datetime, timedelta
 
-# Add the necessary directories to the system path
-script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.extend([
-    script_dir,
-    os.path.join(script_dir, '../utilities')
-])
-
+import os
+import sys
+# ../../utilities
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utilities"))
+# Import modules in scripts/utilities/
+from paths import (PROJECT_ROOT, SCRIPTS_DIR, UTILITIES_DIR, DATABASE_DIR, DATABASE_PATH, OUTPUTS_DIR, FIGURES_DIR, DERIVED_DIR)
 from utils import (
     db_connect,
     db_query,
@@ -38,23 +35,14 @@ def process_data():
 
     print("\n\nSCRIPT: PROCESS DATA -------------------\n")
 
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-
     # Define paths relative to the script's directory
-    src_db_path = os.path.join(script_dir, '../../database/src/sukayu_historical_obs_daily_expanded.sqlite')
-    db_path = os.path.join(script_dir, '../../database/dist/sukayu_historical_obs_daily_everything.sqlite')
-
+    src_db_path  = os.path.join(DATABASE_DIR, 'src/sukayu_historical_obs_daily_expanded.sqlite')
+    dest_db_path = DATABASE_PATH
 
     # Make a working copy of the database
-    shutil.copyfile(src_db_path, db_path)
+    shutil.copyfile(src_db_path, dest_db_path)
 
-
-    output_path = os.path.join(script_dir, '../../outputs')
-    cl_path     = os.path.join(script_dir, '../../Citation_and_License.md')
-
-
+    cl_path     = os.path.join(PROJECT_ROOT, 'Citation_and_License.md')
 
     # query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
     query = """
@@ -70,7 +58,7 @@ def process_data():
 
 
     # Connect to the SQLite database
-    conn = db_connect(db_path)
+    conn = db_connect(dest_db_path)
     print("DB   - Connection established")
 
     # Create a cursor object
@@ -413,8 +401,7 @@ def process_data():
 
 
     # Write the dates to a JSON file
-    output_path_derived = os.path.join(output_path, 'derived')
-    output_json_path = os.path.join(output_path_derived, 'Sukayu-Winters-Data.json')
+    output_json_path = os.path.join(DERIVED_DIR, 'Sukayu-Winters-Data.json')
     with open(output_json_path, 'w') as file:
         json.dump(seasons_data, file, indent=2)
         print(f"JSON - DATA - File written")
@@ -432,7 +419,7 @@ def process_data():
 
 
     # Write the DataFrame to a CSV file and zip it
-    write_and_zip_csv(data=df_seasons_data, filename='Sukayu-Winters-Data', output_path=output_path_derived, label='DATA -', include_file_path=cl_path)
+    write_and_zip_csv(data=df_seasons_data, filename='Sukayu-Winters-Data', output_path=DERIVED_DIR, label='DATA -', include_file_path=cl_path)
 
 
 
@@ -450,7 +437,7 @@ def process_data():
     if df_dump.empty:
         conn.close()
         return
-    output_path_jma = os.path.join(output_path, 'jma')
+    output_path_jma = os.path.join(OUTPUTS_DIR, 'jma')
     # Write the data to a tab-delimited CSV file and zip it
     write_and_zip_csv(data=df_dump, filename='sukayu_historical_obs_daily', output_path=output_path_jma, label='DB -', include_file_path=cl_path)
 

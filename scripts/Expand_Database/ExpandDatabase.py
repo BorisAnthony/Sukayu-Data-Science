@@ -1,15 +1,11 @@
+import shutil
+
 import os
 import sys
-import shutil
-import sqlite3
-
-# Add the necessary directories to the system path
-script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.extend([
-    script_dir,
-    os.path.join(script_dir, '../utilities')
-])
-
+# ../../utilities
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utilities"))
+# Import modules in scripts/utilities/
+from paths import (PROJECT_ROOT, SCRIPTS_DIR, UTILITIES_DIR, DATABASE_DIR, DATABASE_PATH, OUTPUTS_DIR, FIGURES_DIR, DERIVED_DIR)
 from utils import (
     db_connect,
     db_column_exists,
@@ -17,7 +13,6 @@ from utils import (
     db_pragma_integrity_check,
     db_compact_database
 )
-
 from database_ops import (
     create_new_table,
     copy_data_to_new_table,
@@ -30,20 +25,16 @@ def expand_database():
 
     print("\n\nSCRIPT: EXPAND DATABASE ----------------\n")
 
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-
     # Define paths relative to the script's directory
-    src_db_path  = os.path.join(script_dir, '../../database/src/sukayu_historical_obs_daily.sqlite')
-    db_path = os.path.join(script_dir, '../../database/src/sukayu_historical_obs_daily_expanded.sqlite')
+    src_db_path  = os.path.join(DATABASE_DIR, 'src/sukayu_historical_obs_daily.sqlite')
+    dest_db_path = os.path.join(DATABASE_DIR, 'src/sukayu_historical_obs_daily_expanded.sqlite')
 
     
     # Make a working copy of the database
-    shutil.copyfile(src_db_path, db_path)
+    shutil.copyfile(src_db_path, dest_db_path)
     
     # Connect to the SQLite database
-    conn = db_connect(db_path)
+    conn = db_connect(dest_db_path)
     print("DB   - Connection established")
 
     # Create a cursor object
