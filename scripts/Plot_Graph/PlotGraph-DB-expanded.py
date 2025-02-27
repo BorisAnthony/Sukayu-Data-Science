@@ -83,6 +83,8 @@ def parse_arguments():
     # Video generation
     parser.add_argument('--video', dest='video', action='store_true',
                         help='Create videos from the generated PNG files')
+    parser.add_argument('--only-video', dest='only_video', action='store_true',
+                        help='Skip image generation and only create videos from existing PNG files')
     parser.add_argument('--frame-duration', dest='frame_duration', type=float, default=1,
                         help='Duration for each frame in the video in seconds (default: 1)')
     
@@ -1437,7 +1439,7 @@ def process_all_winters(output_dir, db_path, specific_winters=None, viz_types=No
 
 # ------------------------------------------------------------------------------
 # Video Creation
-def create_video_from_pngs(input_pattern, output_file, frame_duration=1):
+def create_video_from_pngs_x(input_pattern, output_file, frame_duration=1):
     """
     Create video from PNG files.
     input_pattern: Path pattern for input files, e.g., "../outputs/figures/*.en.png"
@@ -1462,6 +1464,69 @@ def create_video_from_pngs(input_pattern, output_file, frame_duration=1):
     except subprocess.CalledProcessError as e:
         print(f"❌ Error creating video: {e}\n\n")
 
+def create_video_from_pngs(input_pattern, output_file, still_duration=1, crossfade_duration=4, framerate=24):
+    """
+    Create video from PNG files with crossfades between images.
+    Uses a two-pass approach that's highly reliable.
+    
+    input_pattern: Path pattern for input files, e.g., "../outputs/figures/*.png"
+    output_file: Path for output video file, e.g., "../outputs/figures/animation.mp4"
+    still_duration: How long each frame should show completely (in seconds)
+    crossfade_duration: Duration of crossfade transition (in seconds)
+    """
+    import glob
+    import os
+    import subprocess
+    
+    # Get all PNG files matching the pattern
+    png_files = sorted(glob.glob(input_pattern))
+    if not png_files:
+        print(f"❌ No files found matching pattern: {input_pattern}")
+        return
+    
+    # Step 1: Create a video with all images showing for the correct duration
+    base_video = f"{os.path.splitext(output_file)[0]}_base.mp4"
+    
+    base_cmd = [
+        'ffmpeg',
+        '-y',                  # Overwrite output
+        '-framerate', f'1/{still_duration}',  # One frame every still_duration seconds
+        '-pattern_type', 'glob',
+        '-i', input_pattern,
+        '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',  # Ensure even dimensions
+        '-c:v', 'libx264',     # Codec
+        '-pix_fmt', 'yuv420p', # Pixel format
+        '-r', str(framerate),  # Output framerate
+        base_video             # Output file
+    ]
+    
+    try:
+        subprocess.run(base_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # Step 2: Calculate frames to interpolate based on desired crossfade duration
+        # Since interp_end is in frames, not seconds, we convert
+        frames_to_interpolate = min(int(crossfade_duration * framerate), 255)
+
+        # Step 3: Add crossfade effect to the base video
+        final_cmd = [
+            'ffmpeg',
+            '-y',               # Overwrite output
+            '-i', base_video,   # Input video
+            '-vf', f'tblend=all_mode=average,framerate={framerate}:interp_start=0:interp_end={frames_to_interpolate}:scene=100',
+            '-c:v', 'libx264',  # Codec
+            '-pix_fmt', 'yuv420p',
+            '-movflags', '+faststart',
+            output_file         # Final output
+        ]
+        
+        subprocess.run(final_cmd, check=True)
+        print(f"- Video created successfully: {output_file}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error creating video: {e}\n")
+    finally:
+        # Clean up temporary file
+        if os.path.exists(base_video):
+            os.remove(base_video)
 
 
 # ==============================================================================
@@ -1490,11 +1555,14 @@ if __name__ == "__main__":
         for viz_type in viz_types:
             os.makedirs(f"{output_dir}/{lang}/{viz_type}", exist_ok=True)
     
-    # Process the winter data
-    process_all_winters(output_dir, db_path, args.winters, viz_types)
+    # Process the winter data with specific options if not only generating videos
+    if not args.only_video:
+        process_all_winters(output_dir, db_path, args.winters, viz_types)
+    else:
+        print("Skipping image generation as --only-video was specified")
     
     # Create videos if requested
-    if args.video:
+    if args.video or args.only_video:
         for lang in LANGS:
             for viz_type in viz_types:
                 input_pattern = f"{output_dir}/{lang}/{viz_type}/*.png"
