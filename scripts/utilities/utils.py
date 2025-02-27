@@ -349,22 +349,24 @@ def get_this_winter_season_info():
         "summer_start": summer_start
     }
 
-def is_after_may_17(date):
+def is_after_month_day(date, check_month, check_day):
     """
     Check if the given date is after May 17th (ignoring the year).
     
     Args:
         date: A datetime object to check.
+        check_month: The month to check against (5 for May).
+        check_day: The day to check against (17 for May 17th).
         
     Returns:
-        bool: True if the date is after May 17th, False otherwise.
+        bool: True if the date is after e.g. May 17th, False otherwise.
     """
     # Extract month and day from the input date
     month = date.month
     day = date.day
     
-    # Check if the date is after May 17th
-    if month > 5 or (month == 5 and day > 17):
+    # Check if the date is after check_month/check_day
+    if month > check_month or (month == check_month and day > check_day):
         return True
     else:
         return False

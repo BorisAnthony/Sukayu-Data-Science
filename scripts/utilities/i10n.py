@@ -49,3 +49,9 @@ TRANSLATIONS = {
         }
     }
 }
+# ------------------------------------------------------------------------------
+# Language selection
+def set_language(lang='en'):
+    if lang not in TRANSLATIONS:
+        raise ValueError(f"Language '{lang}' not supported. Available languages: {', '.join(TRANSLATIONS.keys())}")
+    return TRANSLATIONS[lang]

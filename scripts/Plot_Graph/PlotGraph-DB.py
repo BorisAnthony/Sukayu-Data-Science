@@ -1,34 +1,19 @@
+import subprocess
+from datetime import datetime, timedelta
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+from matplotlib import transforms
+import json
+import pandas as pd
+
 import os
 import sys
-import json
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib import transforms
-from datetime import datetime, timedelta
-import subprocess
-import pandas as pd
-# import seaborn as sns
-# from matplotlib import patheffects
-# import matplotlib.colors as mcolors
-# import numpy as np
-# from matplotlib.font_manager import FontProperties
-
-# Add the necessary directories to the system path
-script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.extend([
-    script_dir,
-    os.path.join(script_dir, '../utilities')
-])
-from utils import (
-    db_connect,
-    db_query,
-    df_convert_to_datetime,
-    df_get_timespan_data,
-    df_find_in,
-    jst,
-    is_after_may_17
-)
-from i10n import TRANSLATIONS # Import the language settings/strings
+# ../../utilities
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utilities"))
+# Import modules in scripts/utilities/
+from paths import (PROJECT_ROOT, SCRIPTS_DIR, UTILITIES_DIR, DATABASE_DIR, DATABASE_PATH, OUTPUTS_DIR, FIGURES_DIR, DERIVED_DIR)
+from utils import (db_connect, db_query, df_convert_to_datetime, df_get_timespan_data, df_find_in, jst, is_after_month_day)
+from i10n import (TRANSLATIONS)
 
 RANGE_START = 100
 RANGE_END = 600
@@ -447,13 +432,13 @@ def plot_winter_snow_depth(winter_year, data, lang='en'):
         ax.text(last_subs, markers_subs_y_bot + label_offset, 
                 last_subs.strftime(date_formats['m_d']),
                 # horizontalalignment='left',
-                horizontalalignment='right' if is_after_may_17(last_subs) else 'left',
+                horizontalalignment='right' if is_after_month_day(last_subs,5,17) else 'left',
                 verticalalignment='top', zorder=-300,
                 color='#325C81', weight='bold')
         ax.text(last_subs, markers_subs_y_bot + label_offset + label_exp_offset, 
                 snowfall_markers['lst_subs'],
                 # horizontalalignment='left', 
-                horizontalalignment='right' if is_after_may_17(last_subs) else 'left',
+                horizontalalignment='right' if is_after_month_day(last_subs,5,17) else 'left',
                 verticalalignment='top', zorder=-300,
                 color='#325C81', size='small')
 
@@ -656,11 +641,10 @@ def process_all_winters(output_dir, db_path):
             print(f"Generated: {output_file}")
 
 # Run the batch process
-output_dir = "../outputs/figures"
-output_dir_en = "../outputs/figures/en"
-output_dir_ja = "../outputs/figures/ja"
-# json_file = "../outputs/derived/Sukayu-Winters-Data.json"
-db_path = "../database/dist/sukayu_historical_obs_daily_everything.sqlite" 
+output_dir = FIGURES_DIR
+output_dir_en = os.path.join(FIGURES_DIR, "en")
+output_dir_ja = os.path.join(FIGURES_DIR, "ja")
+db_path = DATABASE_PATH
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
