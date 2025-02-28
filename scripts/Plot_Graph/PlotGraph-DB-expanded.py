@@ -97,6 +97,30 @@ def parse_arguments():
 def pxd(num):
     return num * PIXEL_DEPTH
 
+# Add this helper function to the top section
+def adjust_date_range(year):
+    """
+    Creates a consistent date range regardless of leap years.
+    
+    Args:
+        year (int): Start year of winter season
+        
+    Returns:
+        tuple: (start_date, end_date) with consistent 304-day span
+    """
+    start_date = datetime(year, 9, 1)
+    # Check if year+1 is a leap year
+    is_leap = ((year + 1) % 4 == 0) and ((year + 1) % 100 != 0 or (year + 1) % 400 == 0)
+    
+    if is_leap:
+        # Use June 30 in leap years (304 days total)
+        end_date = datetime(year + 1, 6, 30)
+    else:
+        # Use July 1 in regular years (304 days total)
+        end_date = datetime(year + 1, 7, 1)
+        
+    return start_date, end_date
+
 # ------------------------------------------------------------------------------
 # Language selection
 def set_language(lang='en'):
@@ -248,9 +272,11 @@ def plot_seasons_only(winter_year, data, lang='en'):
     ax = fig.add_axes([0, 0, 1, 1])  # Uses full figure area
     
     # Date range - must match full graph
+    # year = int(winter_year.split('-')[0])
+    # start_date = datetime(year, 9, 1)
+    # end_date = datetime(year + 1, 7, 1)
     year = int(winter_year.split('-')[0])
-    start_date = datetime(year, 9, 1)
-    end_date = datetime(year + 1, 7, 1)
+    start_date, end_date = adjust_date_range(year)
     ax.set_xlim(start_date, end_date)
     
     # Calculate coordinate space
@@ -384,10 +410,12 @@ def plot_snowdepth_snowfall_seasons(winter_year, data, lang='en'):
     ax = fig.add_subplot(111)
     
     # Calculate date range for this specific winter
+    # year = int(winter_year.split('-')[0])
+    # start_date = datetime(year, 9, 1)
+    # end_date = datetime(year + 1, 7, 1)
     year = int(winter_year.split('-')[0])
-    start_date = datetime(year, 9, 1)
-    end_date = datetime(year + 1, 7, 1)
-    
+    start_date, end_date = adjust_date_range(year)
+
     # Set axis limits
     ax.set_xlim(start_date, end_date)
     ax.set_ylim(-300, RANGE_END)  # -200 to accommodate season blocks and labels
@@ -834,10 +862,12 @@ def plot_snowdepth_snowfall_seasons_temps(winter_year, data, lang='en'):
     ax = fig.add_subplot(111)
     
     # Calculate date range
+    # year = int(winter_year.split('-')[0])
+    # start_date = datetime(year, 9, 1)
+    # end_date = datetime(year + 1, 7, 1)
     year = int(winter_year.split('-')[0])
-    start_date = datetime(year, 9, 1)
-    end_date = datetime(year + 1, 7, 1)
-    
+    start_date, end_date = adjust_date_range(year)
+
     # Calculate coordinate ranges for different sections
     snow_top = SNOW_DEPTH_AREA_PX
     season_top = 0
@@ -1439,30 +1469,30 @@ def process_all_winters(output_dir, db_path, specific_winters=None, viz_types=No
 
 # ------------------------------------------------------------------------------
 # Video Creation
-def create_video_from_pngs_x(input_pattern, output_file, frame_duration=1):
-    """
-    Create video from PNG files.
-    input_pattern: Path pattern for input files, e.g., "../outputs/figures/*.en.png"
-    output_file: Path for output video file, e.g., "../outputs/figures/animation.mp4"
-    frame_duration: How long each frame should show (in seconds)
-    """
-    ffmpeg_cmd = [
-        'ffmpeg',
-        '-y',  # Overwrite output file if it exists
-        '-framerate', f'1/{frame_duration}',  # One frame every 2 seconds
-        '-pattern_type', 'glob',
-        '-i', input_pattern,
-        '-c:v', 'libx264',  # Use H.264 codec
-        '-pix_fmt', 'yuv420p',  # Required for compatibility
-        '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2,fps=30',  # Output video framerate
-        output_file
-    ]
+# def create_video_from_pngs_x(input_pattern, output_file, frame_duration=1):
+#     """
+#     Create video from PNG files.
+#     input_pattern: Path pattern for input files, e.g., "../outputs/figures/*.en.png"
+#     output_file: Path for output video file, e.g., "../outputs/figures/animation.mp4"
+#     frame_duration: How long each frame should show (in seconds)
+#     """
+#     ffmpeg_cmd = [
+#         'ffmpeg',
+#         '-y',  # Overwrite output file if it exists
+#         '-framerate', f'1/{frame_duration}',  # One frame every 2 seconds
+#         '-pattern_type', 'glob',
+#         '-i', input_pattern,
+#         '-c:v', 'libx264',  # Use H.264 codec
+#         '-pix_fmt', 'yuv420p',  # Required for compatibility
+#         '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2,fps=30',  # Output video framerate
+#         output_file
+#     ]
     
-    try:
-        subprocess.run(ffmpeg_cmd, check=True)
-        print(f"- Video created successfully: {output_file}\n")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error creating video: {e}\n\n")
+#     try:
+#         subprocess.run(ffmpeg_cmd, check=True)
+#         print(f"- Video created successfully: {output_file}\n")
+#     except subprocess.CalledProcessError as e:
+#         print(f"❌ Error creating video: {e}\n\n")
 
 def create_video_from_pngs(input_pattern, output_file, still_duration=1, crossfade_duration=4, framerate=24):
     """
