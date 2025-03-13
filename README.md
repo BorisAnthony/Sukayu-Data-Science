@@ -72,3 +72,32 @@ We find or calculate the seasonal minima, maxima and averages (means) of the dai
 
 This project currently is based in the Python programming language and requires familiarity with environment setup.
 I will try to lightly document easy setup instructions eventually.
+
+## Notes
+
+If you don't have a `venv` yet, run:
+```
+python3 -m venv venv
+```
+
+Activate the `venv`
+
+```
+source venv/bin/activate
+```
+
+Install requirements:
+```
+pip install -r requirements.txt
+```
+
+Then you should be able to run the scripts:
+1. To process the source database and generate the extended data set we work with:
+```
+python3 scripts/RunPipeline.py
+```
+2. To generate all plots and videos:
+```
+python3 scripts/Plot_Graph/PlotGraph-DB-expanded.py --full --no-temps --seasons-only --video 
+```
+(see the script for the supported arguments)
