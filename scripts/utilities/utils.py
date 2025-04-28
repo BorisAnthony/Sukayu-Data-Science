@@ -20,7 +20,7 @@ def db_connect(db_path):
         return sqlite3.connect(db_path)
     except sqlite3.Error as e:
         print(f"Error connecting to database: {e}")
-        conn.close()
+        # conn.close()
         return
 
 def db_query(query, conn):
@@ -53,7 +53,7 @@ def db_pragma_integrity_check(cursor):
     integrity_result = cursor.fetchone()
     if integrity_result[0] != 'ok':
         print("Integrity check failed. Aborting.")
-        conn.close()
+        # conn.close()
         return
 
 def db_compact_database(cursor):
