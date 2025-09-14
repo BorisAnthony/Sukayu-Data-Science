@@ -1593,8 +1593,11 @@ if __name__ == "__main__":
     
     # Create videos if requested
     if args.video or args.only_video:
+        print("\nCreating videos from PNG files...\n")
         for lang in LANGS:
+            print(f"\n🌐 Language: {lang}\n")
             for viz_type in viz_types:
+                print(f"📊 Visualization Type: {viz_type}")
                 input_pattern = f"{output_dir}/{lang}/{viz_type}/*.png"
                 output_video = f"{output_dir}/{lang}/{viz_type}/winters.mp4"
                 create_video_from_pngs(input_pattern, output_video, args.frame_duration)
