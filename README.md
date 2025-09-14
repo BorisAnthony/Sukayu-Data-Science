@@ -36,7 +36,7 @@ We calculate 2 versions, one based on the daily mean temperature for 7 days, so:
 
 - “First and Last of Substance” are similar to the "Scandi Seasons", where we look for the **first and last time 3 days in a row of at least 5.0 cm snowfall** were recorded that season.
 
-- “Season Total” is the sum of the seasons’ daily reported snowfall. (*Note that is different from snow depth. Snow compacts and melts, after all.*)
+- “Season Total” is the sum of the seasons’ daily reported snowfall. (*Note that this is different from snow depth. Snow compacts and melts, after all.*)
 
 - “Days over N” gives a count of how many days (each) had snowfall reported over increments of 10 cm thresholds.
 
@@ -70,34 +70,30 @@ We find or calculate the seasonal minima, maxima and averages (means) of the dai
 
 # How to install & run
 
-This project currently is based in the Python programming language and requires familiarity with environment setup.
-I will try to lightly document easy setup instructions eventually.
+This Python project has been set up to run using the "[uv](https://github.com/astral-sh/uv)" package and project manager.
+[Install](https://docs.astral.sh/uv/getting-started/installation/) that first, if you haven't already.
 
-## Notes
+Uv handles all the requirements and virtual environemnt stuff, as well as providing a "front end" to Python itself.
 
-If you don't have a `venv` yet, run:
-```
-python3 -m venv venv
-```
 
-Activate the `venv`
+## Usage
 
+Install project requirements:
 ```
-source venv/bin/activate
-```
-
-Install requirements:
-```
-pip install -r requirements.txt
+uv add -r requirements.txt
 ```
 
 Then you should be able to run the scripts:
 1. To process the source database and generate the extended data set we work with:
-```
-python3 scripts/RunPipeline.py
+```sh
+uv run scripts/RunPipeline.py
 ```
 2. To generate all plots and videos:
+```sh
+uv run scripts/Plot_Graph/PlotGraph-DB-expanded.py --full --no-temps --seasons-only --video 
 ```
-python3 scripts/Plot_Graph/PlotGraph-DB-expanded.py --full --no-temps --seasons-only --video 
+
+To see all Plotting flags:
+```sh
+uv run scripts/Plot_Graph/PlotGraph-DB-expanded.py --help
 ```
-(see the script for the supported arguments)
