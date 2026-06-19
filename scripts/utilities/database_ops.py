@@ -5,8 +5,8 @@ def create_new_table(cursor):
     """Create a new table with the desired column order."""
     cursor.execute("""
         CREATE TABLE obs_sukayu_daily_new (
-            obs_date TEXT UNIQUE,
-            obs_time INTEGER UNIQUE,
+            update_date TEXT UNIQUE,
+            update_time INTEGER UNIQUE,
             temp_avg REAL,
             temp_avg_7dcra REAL,
             temp_avg_7dcra_std REAL,
@@ -39,8 +39,8 @@ def copy_data_to_new_table(cursor):
     """Copy data from the old table to the new table."""
     cursor.execute("""
         INSERT INTO obs_sukayu_daily_new (
-            obs_date,
-            obs_time,
+            update_date,
+            update_time,
             temp_avg,
             temp_avg_7dcra,
             temp_avg_7dcra_std,
@@ -68,8 +68,8 @@ def copy_data_to_new_table(cursor):
             hum_min
         )
         SELECT
-            obs_date,
-            obs_time,
+            update_date,
+            update_time,
             temp_avg,
             NULL,
             NULL,
@@ -117,7 +117,7 @@ def calculate_and_update_rolling_averages(cursor):
     """Calculate and update 7-day centered rolling averages for temp_avg, temp_hgh, and temp_low."""
 
     # Load data into a DataFrame
-    df = pd.read_sql_query("SELECT rowid, obs_date, temp_avg, temp_hgh, temp_low FROM obs_sukayu_daily_new", cursor.connection)    
+    df = pd.read_sql_query("SELECT rowid, update_date, temp_avg, temp_hgh, temp_low FROM obs_sukayu_daily_new", cursor.connection)    
     # Calculate centered rolling Averages with a window of 7 days and min_periods set to 1
     df['temp_avg_7dcra'] = round(df['temp_avg'].rolling(window=7, center=True, min_periods=1).mean(), 1)
     df['temp_hgh_7dcra'] = round(df['temp_hgh'].rolling(window=7, center=True, min_periods=1).mean(), 1)

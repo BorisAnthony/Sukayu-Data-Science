@@ -44,15 +44,15 @@ def process_data():
 
     cl_path     = os.path.join(PROJECT_ROOT, 'Citation_and_License.md')
 
-    # query = "SELECT obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
+    # query = "SELECT update_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp FROM obs_sukayu_daily"
     query = """
     SELECT
-        strftime("%Y", obs_date) as year,
-        obs_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp 
+        strftime("%Y", update_date) as year,
+        update_date, temp_avg, temp_hgh, temp_low, temp_amp, snowfall, snowdepth, wind_speed_amp 
     FROM
         obs_sukayu_daily
     ORDER BY
-        obs_date ASC
+        update_date ASC
     """
 
 
@@ -71,7 +71,7 @@ def process_data():
 
 
     # Convert the date column to datetime and set timezone to JST
-    df = df_convert_to_datetime(df, 'obs_date', jst)
+    df = df_convert_to_datetime(df, 'update_date', jst)
 
 
 
@@ -86,9 +86,9 @@ def process_data():
         year = int(year)
 
         """ Set the timespan data for the season sections to get scandi start dates, snowfall dates, and snowdepth threshold dates """
-        df_full_season = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=10, end_month=7)
-        df_1st_half_se = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=10, end_month=1)
-        df_2nd_half_se = df_get_timespan_data(df=df, date_column='obs_date', year=year+1, start_month=2, end_month=7)
+        df_full_season = df_get_timespan_data(df=df, date_column='update_date', year=year, start_month=10, end_month=7)
+        df_1st_half_se = df_get_timespan_data(df=df, date_column='update_date', year=year, start_month=10, end_month=1)
+        df_2nd_half_se = df_get_timespan_data(df=df, date_column='update_date', year=year+1, start_month=2, end_month=7)
 
         """Find the first date where snowfall is not 0.0.
             by scanning the first half of the season, forwards."""
@@ -96,7 +96,7 @@ def process_data():
             # timespan_data=group, 
             df_timespan_data=df_1st_half_se,
             dayspan=1, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='snowfall',
             all_or_mean='any', 
             threshold=0.0, 
@@ -108,7 +108,7 @@ def process_data():
         last_snowfall_date  = df_find_in(
             df_timespan_data=df_2nd_half_se.iloc[::-1], 
             dayspan=1, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='snowfall', 
             all_or_mean='any', 
             threshold=0.0, 
@@ -120,7 +120,7 @@ def process_data():
         first_snowfall_of_consequence_date = df_find_in(
             df_timespan_data=df_1st_half_se,
             dayspan=3, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='snowfall', 
             all_or_mean='all', 
             threshold=5.0, 
@@ -132,7 +132,7 @@ def process_data():
         last_snowfall_of_consequence_date = df_find_in(
             df_timespan_data=df_2nd_half_se.iloc[::-1], 
             dayspan=3, 
-            date_column='obs_date',
+            date_column='update_date',
             search_column='snowfall', 
             all_or_mean='all', 
             threshold=5.0, 
@@ -155,7 +155,7 @@ def process_data():
         # scandi_start_of_autumn_date = df_find_in(
         #     df_timespan_data=df_1st_half_se,
         #     dayspan=scandi_strct_dayspan, 
-        #     date_column='obs_date', 
+        #     date_column='update_date', 
         #     search_column='temp_avg', 
         #     all_or_mean='all', 
         #     threshold=scandi_warm_threshold, 
@@ -167,7 +167,7 @@ def process_data():
         # scandi_start_of_winter_date = df_find_in(
         #     df_timespan_data=df_1st_half_se,
         #     dayspan=scandi_strct_dayspan, 
-        #     date_column='obs_date', 
+        #     date_column='update_date', 
         #     search_column='temp_avg', 
         #     all_or_mean='all', 
         #     threshold=scandi_cold_threshold, 
@@ -179,7 +179,7 @@ def process_data():
         # scandi_start_of_spring_date = df_find_in(
         #     df_timespan_data=df_2nd_half_se, 
         #     dayspan=scandi_strct_dayspan, 
-        #     date_column='obs_date', 
+        #     date_column='update_date', 
         #     search_column='temp_avg', 
         #     all_or_mean='all', 
         #     threshold=scandi_cold_threshold, 
@@ -191,7 +191,7 @@ def process_data():
         # scandi_start_of_summer_date = df_find_in(
         #     df_timespan_data=df_2nd_half_se, 
         #     dayspan=scandi_strct_dayspan, 
-        #     date_column='obs_date', 
+        #     date_column='update_date', 
         #     search_column='temp_avg', 
         #     all_or_mean='all', 
         #     threshold=scandi_warm_threshold, 
@@ -204,7 +204,7 @@ def process_data():
         scandi_start_of_autumn_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
             dayspan=scandi_avg_dayspan, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=scandi_warm_threshold, 
@@ -217,7 +217,7 @@ def process_data():
         scandi_start_of_winter_avg_based_date = df_find_in(
             df_timespan_data=df_1st_half_se,
             dayspan=scandi_avg_dayspan, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=scandi_cold_threshold, 
@@ -230,7 +230,7 @@ def process_data():
         scandi_start_of_spring_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=scandi_avg_dayspan, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=scandi_cold_threshold, 
@@ -243,7 +243,7 @@ def process_data():
         scandi_start_of_summer_avg_based_date = df_find_in(
             df_timespan_data=df_2nd_half_se, 
             dayspan=scandi_avg_dayspan, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='temp_avg', 
             all_or_mean='mean', 
             threshold=scandi_warm_threshold, 
@@ -262,7 +262,7 @@ def process_data():
             snowdepth_date_first[depth] = df_find_in(
                 df_timespan_data=df_full_season,
                 dayspan=1, 
-                date_column='obs_date', 
+                date_column='update_date', 
                 search_column='snowdepth', 
                 all_or_mean='any', 
                 threshold=depth,
@@ -275,7 +275,7 @@ def process_data():
             snowdepth_date_last[depth] = df_find_in(
                 df_timespan_data=df_full_season.iloc[::-1], 
                 dayspan=1, 
-                date_column='obs_date', 
+                date_column='update_date', 
                 search_column='snowdepth', 
                 all_or_mean='any', 
                 threshold=depth,
@@ -288,7 +288,7 @@ def process_data():
         snow_gone_date = df_find_in(
             df_timespan_data=df_2nd_half_se.iloc[::-1],
             dayspan=1, 
-            date_column='obs_date', 
+            date_column='update_date', 
             search_column='snowdepth', 
             all_or_mean='any', 
             threshold=0.0, 
@@ -321,7 +321,7 @@ def process_data():
         # ! Maybe not right?
 
         """ Set the timespan data for the season for use in full-season min/max/sum/avg calculations """
-        df_trad_season = df_get_timespan_data(df=df, date_column='obs_date', year=year, start_month=12, end_month=4)
+        df_trad_season = df_get_timespan_data(df=df, date_column='update_date', year=year, start_month=12, end_month=4)
 
         stats = calculate_stats(df_trad_season, columns)
 

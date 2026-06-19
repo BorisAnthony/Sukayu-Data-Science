@@ -37,7 +37,7 @@ def generate_heatmaps():
     # Query the data
     query = """
     SELECT 
-        obs_date, 
+        update_date, 
         temp_avg 
     FROM 
         obs_sukayu_daily
@@ -53,10 +53,10 @@ def generate_heatmaps():
 
     # Loop through the rows and generate a single-row heatmap for each one
     for index, row in df.iterrows():
-        obs_date = row['obs_date']
+        update_date = row['update_date']
         temp_avg = row['temp_avg']
 
-        print (obs_date, temp_avg)
+        print (update_date, temp_avg)
 
 
 def generate_html():

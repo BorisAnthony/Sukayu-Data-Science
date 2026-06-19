@@ -166,10 +166,10 @@ def load_winter_data(winter_year, db_path):
     
     # Query daily data for this winter period (September 1 of start_year to June 30 of end_year)
     daily_query = f"""
-    SELECT obs_date, snowfall, snowdepth, temp_avg_7dcra 
+    SELECT update_date, snowfall, snowdepth, temp_avg_7dcra 
     FROM obs_sukayu_daily 
-    WHERE obs_date BETWEEN '{start_year}-09-01' AND '{end_year}-06-30' 
-    ORDER BY obs_date
+    WHERE update_date BETWEEN '{start_year}-09-01' AND '{end_year}-06-30' 
+    ORDER BY update_date
     """
     daily_data = db_query(daily_query, conn)
     
@@ -178,10 +178,10 @@ def load_winter_data(winter_year, db_path):
     
     # If no daily data found, create empty DataFrame
     if daily_data is None or daily_data.empty:
-        daily_data = pd.DataFrame(columns=['obs_date', 'snowfall', 'snowdepth', 'temp_avg_7dcra'])
+        daily_data = pd.DataFrame(columns=['update_date', 'snowfall', 'snowdepth', 'temp_avg_7dcra'])
     
-    # Convert obs_date to datetime
-    daily_data['obs_date'] = pd.to_datetime(daily_data['obs_date'])
+    # Convert update_date to datetime
+    daily_data['update_date'] = pd.to_datetime(daily_data['update_date'])
     
     # Build depths and milestones data structure (same as before)
     depths = {
@@ -442,7 +442,7 @@ def plot_snowdepth_snowfall_seasons(winter_year, data, lang='en'):
         valid_snowfall = daily_data.dropna(subset=['snowfall'])
         
         # Plot snowfall bars
-        ax.bar(valid_snowfall['obs_date'], 
+        ax.bar(valid_snowfall['update_date'], 
             valid_snowfall['snowfall'],
             width=0.75,  # 1 day width
             color='#4682B4',  # Steel blue color
@@ -900,7 +900,7 @@ def plot_snowdepth_snowfall_seasons_temps(winter_year, data, lang='en'):
         valid_snowfall = daily_data.dropna(subset=['snowfall'])
         
         # Plot snowfall bars
-        ax.bar(valid_snowfall['obs_date'], 
+        ax.bar(valid_snowfall['update_date'], 
             valid_snowfall['snowfall'],
             width=0.75,  # 1 day width
             color='#4682B4',  # Steel blue color
@@ -1063,7 +1063,7 @@ def plot_snowdepth_snowfall_seasons_temps(winter_year, data, lang='en'):
                 return season_bottom + norm_temp * SEASON_BLOCK_HEIGHT_PX
             
             # Extract data for easier processing
-            dates = valid_temp['obs_date'].tolist()
+            dates = valid_temp['update_date'].tolist()
             temps = valid_temp['temp_avg_7dcra'].tolist()
             y_values = [temp_to_y(temp) for temp in temps]
             
